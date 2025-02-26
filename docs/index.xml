@@ -6,8 +6,18 @@
     <description>Recent content in .blacktea_extract on blacktea_extract</description>
     <generator>Hugo -- 0.144.2</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 05 Feb 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 26 Feb 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://blackteaextract.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>new_theme</title>
+      <link>https://blackteaextract.github.io/read/new_theme/</link>
+      <pubDate>Wed, 26 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>https://blackteaextract.github.io/read/new_theme/</guid>
+      <description>&lt;p&gt;I just implemented a new the!
+I hope you like it.&lt;/p&gt;
+&lt;p&gt;Also I have adjusted the publication script and therefore could remove the GitHub workflow.
+Now its just pushing the public folder.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>integrating_obsidian</title>
       <link>https://blackteaextract.github.io/read/integrating-obsidian/</link>
