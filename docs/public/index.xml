@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>.blacktea_extract on blacktea_extract</title>
+    <link>https://blackteaextract.github.io/</link>
+    <description>Recent content in .blacktea_extract on blacktea_extract</description>
+    <generator>Hugo -- 0.144.2</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 26 Feb 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://blackteaextract.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>new_theme</title>
+      <link>https://blackteaextract.github.io/read/new_theme/</link>
+      <pubDate>Wed, 26 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>https://blackteaextract.github.io/read/new_theme/</guid>
+      <description>&lt;p&gt;I just implemented a new the!
+I hope you like it.&lt;/p&gt;
+&lt;p&gt;Also I have adjusted the publication script and therefore could remove the GitHub workflow.
+Now its just pushing the public folder.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>integrating_obsidian</title>
+      <link>https://blackteaextract.github.io/read/integrating-obsidian/</link>
+      <pubDate>Wed, 05 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>https://blackteaextract.github.io/read/integrating-obsidian/</guid>
+      <description>&lt;h3 id=&#34;what-am-i-even-doing&#34;&gt;what am I even doing?&lt;/h3&gt;
+&lt;p&gt;My goal here is to just write new website entries for this site in Obsidian.
+I just stumbled upon this &lt;a href=&#34;https://blog.networkchuck.com/posts/my-insane-blog-pipeline/&#34;&gt;blog-post of networkchuck&lt;/a&gt;, a content creator that sparked my interest to be more into trying out &amp;ldquo;more technical stuff&amp;rdquo; on my own.&lt;/p&gt;
+&lt;p&gt;The problem here, at least for me, was that I already had started to build my website in a more complicated way before. I just uploaded the files manually to the GitHub repository manually. Painful and probably the reason I didn&amp;rsquo;t write stuff basically at all. But I was already building with hugo and using GitHub.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>the_sick_man_of_today</title>
+      <link>https://blackteaextract.github.io/read/the_sick_man_of_today/</link>
+      <pubDate>Wed, 08 Jan 2025 11:24:14 +0100</pubDate>
+      <guid>https://blackteaextract.github.io/read/the_sick_man_of_today/</guid>
+      <description>&lt;h3 id=&#34;what-is-wrong-with-the-internet&#34;&gt;what is wrong with the internet?&lt;/h3&gt;
+&lt;p&gt;I just have the feeling recently, that the web is getting worse. Even more than I have thought it to be. But let me start from the beginning.&lt;/p&gt;
+&lt;p&gt;The internet, as I used to know it, has kind of ceased to exist. It used to be a place where actual humans used to interact. But recently I can&amp;rsquo;t overcome the feeling, that I - ironically - have lost the connection to actual real human people.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>pessimist_optimist</title>
+      <link>https://blackteaextract.github.io/read/pessimist_optimist/</link>
+      <pubDate>Sat, 20 Jul 2024 14:04:30 +0200</pubDate>
+      <guid>https://blackteaextract.github.io/read/pessimist_optimist/</guid>
+      <description>&lt;p&gt;I like to think of myself as an optimist in practice, but this doesn&amp;rsquo;t mean that I shouldn&amp;rsquo;t be pessimistic about humanity as a whole. Always.&lt;/p&gt;
+&lt;p&gt;Just look us, doing all the same shit over and over again. Nothing to be left with, exept &lt;strong&gt;weltschmerz&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;cred. Max Horkheimer&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>test_for_functionallity</title>
+      <link>https://blackteaextract.github.io/see/test_for_functionallity/</link>
+      <pubDate>Fri, 19 Jul 2024 13:59:34 +0200</pubDate>
+      <guid>https://blackteaextract.github.io/see/test_for_functionallity/</guid>
+      <description>&lt;p&gt;If you can see an image here, it is working.
+&lt;!-- raw HTML omitted --&gt;
+!&lt;img alt=&#34;Image Description&#34; loading=&#34;lazy&#34; src=&#34;https://blackteaextract.github.io/images/Pasted%20image%2020250205194750.png&#34;&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>test1</title>
+      <link>https://blackteaextract.github.io/see/see1/</link>
+      <pubDate>Fri, 19 Jul 2024 13:49:08 +0200</pubDate>
+      <guid>https://blackteaextract.github.io/see/see1/</guid>
+      <description>&lt;p&gt;empty atm :/&lt;/p&gt;
+&lt;p&gt;test
+!&lt;img alt=&#34;Image Description&#34; loading=&#34;lazy&#34; src=&#34;https://blackteaextract.github.io/images/Pasted%20image%2020250205192953.png&#34;&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>.projects</title>
+      <link>https://blackteaextract.github.io/projects/</link>
+      <pubDate>Fri, 19 Jul 2024 13:45:26 +0200</pubDate>
+      <guid>https://blackteaextract.github.io/projects/</guid>
+      <description>&lt;h3 id=&#34;projects-i-am-working-on-right-now&#34;&gt;projects I am working on right now:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;this website (no shit&amp;hellip;)&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
+      <title>.about</title>
+      <link>https://blackteaextract.github.io/about/</link>
+      <pubDate>Fri, 19 Jul 2024 13:12:02 +0200</pubDate>
+      <guid>https://blackteaextract.github.io/about/</guid>
+      <description>&lt;p&gt;This site is about me &amp;ndash; and the things that I am engaging with.&lt;/p&gt;
+&lt;h3 id=&#34;who-am-i&#34;&gt;who am I?&lt;/h3&gt;
+&lt;p&gt;Good question!&lt;/p&gt;
+&lt;p&gt;Right now I don&amp;rsquo;t know. Certainly I am a _&lt;strong&gt;human&lt;/strong&gt;. But I still &lt;strong&gt;don&amp;rsquo;t know&lt;/strong&gt; where my place is in all of this. So maybe I can leaverage this new way of expression on here to &lt;strong&gt;find out&lt;/strong&gt;?&lt;/p&gt;
+&lt;h3 id=&#34;what-am-i-interested-in&#34;&gt;what am I interested in?&lt;/h3&gt;
+&lt;p&gt;A lot!&lt;/p&gt;
+&lt;p&gt;And it &lt;strong&gt;constantly changes&lt;/strong&gt;. But I came to regognize &lt;strong&gt;common themes&lt;/strong&gt;:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
