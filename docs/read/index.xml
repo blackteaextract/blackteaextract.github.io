@@ -13,16 +13,17 @@
       <link>https://blackteaextract.github.io/read/new_theme/</link>
       <pubDate>Wed, 26 Feb 2025 00:00:00 +0000</pubDate>
       <guid>https://blackteaextract.github.io/read/new_theme/</guid>
-      <description>&lt;p&gt;I just implemented a new the!
+      <description>&lt;p&gt;I just implemented a new theme :)
 I hope you like it.&lt;/p&gt;
 &lt;p&gt;Also I have adjusted the publication script and therefore could remove the GitHub workflow.
-Now its just pushing the public folder.&lt;/p&gt;</description>
+Now its just pushing the public folder. Just had to create a new one and name it &lt;code&gt;docs&lt;/code&gt;.
+For more see &lt;a href=&#34;https://blackteaextract.github.io/read/integrating_obsidian/&#34; title=&#34;go to post&#34;&gt;this post&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>integrating_obsidian</title>
-      <link>https://blackteaextract.github.io/read/integrating-obsidian/</link>
+      <link>https://blackteaextract.github.io/read/integrating_obsidian/</link>
       <pubDate>Wed, 05 Feb 2025 00:00:00 +0000</pubDate>
-      <guid>https://blackteaextract.github.io/read/integrating-obsidian/</guid>
+      <guid>https://blackteaextract.github.io/read/integrating_obsidian/</guid>
       <description>&lt;h3 id=&#34;what-am-i-even-doing&#34;&gt;what am I even doing?&lt;/h3&gt;
 &lt;p&gt;My goal here is to just write new website entries for this site in Obsidian.
 I just stumbled upon this &lt;a href=&#34;https://blog.networkchuck.com/posts/my-insane-blog-pipeline/&#34;&gt;blog-post of networkchuck&lt;/a&gt;, a content creator that sparked my interest to be more into trying out &amp;ldquo;more technical stuff&amp;rdquo; on my own.&lt;/p&gt;
