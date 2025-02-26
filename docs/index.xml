@@ -86,12 +86,9 @@ I just stumbled upon this &lt;a href=&#34;https://blog.networkchuck.com/posts/my
       <description>&lt;h2 id=&#34;projects-i-am-working-on-right-now&#34;&gt;projects I am working on right now:&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;this website (no shit&amp;hellip;)
-&lt;ul&gt;
-&lt;li&gt;&lt;input checked=&#34;&#34; disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; &lt;del&gt;setting up script to publish&lt;/del&gt;&lt;/li&gt;
-&lt;li&gt;&lt;input checked=&#34;&#34; disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; &lt;del&gt;theme overhaul&lt;/del&gt;&lt;/li&gt;
-&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; implement gallery&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
+[x] &lt;del&gt;setting up script to publish&lt;/del&gt;
+[x] &lt;del&gt;theme overhaul&lt;/del&gt;
+[ ] implement gallery&lt;/li&gt;
 &lt;/ul&gt;</description>
     </item>
   </channel>
