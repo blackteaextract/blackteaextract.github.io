@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Noctalia-Shell on blacktea_extract</title>
+    <link>https://blackteaextract.github.io/tags/noctalia-shell/</link>
+    <description>Recent content in Noctalia-Shell on blacktea_extract</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 30 Mar 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://blackteaextract.github.io/tags/noctalia-shell/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>writing_my_first_plugin</title>
+      <link>https://blackteaextract.github.io/read/writing_my_first_plugin/</link>
+      <pubDate>Mon, 30 Mar 2026 00:00:00 +0000</pubDate>
+      <guid>https://blackteaextract.github.io/read/writing_my_first_plugin/</guid>
+      <description>&lt;h3 id=&#34;squeekboard-toggle&#34;&gt;squeekboard toggle&lt;/h3&gt;
+&lt;p&gt;Yesterday wrote my first plugin for noctalia-shell:
+&lt;a href=&#34;https://github.com/blackteaextract/noctalia-plugins/tree/feat/squeekboard-toggle&#34;&gt;https://github.com/blackteaextract/noctalia-plugins/tree/feat/squeekboard-toggle&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;It allows to manually toggle the osk squeekboard on or off, while keeping the automatic tablet mode detection in 2-in-1 laptops.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

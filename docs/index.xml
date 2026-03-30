@@ -4,10 +4,20 @@
     <title>blacktea_extract</title>
     <link>https://blackteaextract.github.io/</link>
     <description>Recent content on blacktea_extract</description>
-    <generator>Hugo -- 0.145.0</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 26 Feb 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 30 Mar 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://blackteaextract.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>writing_my_first_plugin</title>
+      <link>https://blackteaextract.github.io/read/writing_my_first_plugin/</link>
+      <pubDate>Mon, 30 Mar 2026 00:00:00 +0000</pubDate>
+      <guid>https://blackteaextract.github.io/read/writing_my_first_plugin/</guid>
+      <description>&lt;h3 id=&#34;squeekboard-toggle&#34;&gt;squeekboard toggle&lt;/h3&gt;
+&lt;p&gt;Yesterday wrote my first plugin for noctalia-shell:
+&lt;a href=&#34;https://github.com/blackteaextract/noctalia-plugins/tree/feat/squeekboard-toggle&#34;&gt;https://github.com/blackteaextract/noctalia-plugins/tree/feat/squeekboard-toggle&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;It allows to manually toggle the osk squeekboard on or off, while keeping the automatic tablet mode detection in 2-in-1 laptops.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>new_theme</title>
       <link>https://blackteaextract.github.io/read/new_theme/</link>
