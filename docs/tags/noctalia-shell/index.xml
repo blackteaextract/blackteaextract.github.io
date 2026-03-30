@@ -14,9 +14,17 @@
       <pubDate>Mon, 30 Mar 2026 00:00:00 +0000</pubDate>
       <guid>https://blackteaextract.github.io/read/writing_my_first_plugin/</guid>
       <description>&lt;h3 id=&#34;squeekboard-toggle&#34;&gt;squeekboard toggle&lt;/h3&gt;
-&lt;p&gt;Yesterday wrote my first plugin for noctalia-shell:
-&lt;a href=&#34;https://github.com/blackteaextract/noctalia-plugins/tree/feat/squeekboard-toggle&#34;&gt;https://github.com/blackteaextract/noctalia-plugins/tree/feat/squeekboard-toggle&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;It allows to manually toggle the osk squeekboard on or off, while keeping the automatic tablet mode detection in 2-in-1 laptops.&lt;/p&gt;</description>
+&lt;p&gt;Yesterday wrote my first &lt;a href=&#34;https://github.com/blackteaextract/noctalia-plugins/tree/feat/squeekboard-toggle&#34;&gt;plugin for noctalia-shell&lt;/a&gt; (&lt;a href=&#34;https://github.com/noctalia&#34;&gt;Noctalia&lt;/a&gt;). It&amp;rsquo;s a plugin/ bar widget that adds a bar widget to toggle the &lt;a href=&#34;https://gitlab.gnome.org/World/Phosh/squeekboard&#34;&gt;Squeekboard&lt;/a&gt; on-screen keyboard. Works with 2-in-1 Linux devices.&lt;/p&gt;
+&lt;h3 id=&#34;features&#34;&gt;Features&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;One-click toggle&lt;/strong&gt; — Left-click the widget to show/hide Squeekboard&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Visual indicator&lt;/strong&gt; — Icon reflects current keyboard state (active/hidden)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Live state sync&lt;/strong&gt; — Monitors gsettings changes from external sources (tablet mode, accessibility settings)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Tooltip support&lt;/strong&gt; — Hover to see keyboard status&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Non-intrusive&lt;/strong&gt; — Works alongside automated tablet-mode switching without conflicts&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;how-it-works&#34;&gt;How it works&lt;/h3&gt;
+&lt;p&gt;The widget uses &lt;code&gt;gsettings&lt;/code&gt; to read and write the GNOME accessibility setting &lt;code&gt;org.gnome.desktop.a11y.applications screen-keyboard-enabled&lt;/code&gt;, which controls Squeekboard&amp;rsquo;s visibility. It continuously monitors this setting, so manual toggles and automated tablet-mode events stay in sync.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
