@@ -9,10 +9,10 @@
     <lastBuildDate>Mon, 30 Mar 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://bl-xt.xyz/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>writing_my_first_plugin</title>
-      <link>https://bl-xt.xyz/read/writing_my_first_plugin/</link>
+      <title>making_my_first_plugin</title>
+      <link>https://bl-xt.xyz/read/making_my_first_plugin/</link>
       <pubDate>Mon, 30 Mar 2026 00:00:00 +0000</pubDate>
-      <guid>https://bl-xt.xyz/read/writing_my_first_plugin/</guid>
+      <guid>https://bl-xt.xyz/read/making_my_first_plugin/</guid>
       <description>&lt;h3 id=&#34;squeekboard-toggle&#34;&gt;squeekboard toggle&lt;/h3&gt;
 &lt;p&gt;Yesterday I made my first &lt;a href=&#34;https://github.com/blackteaextract/noctalia-plugins/tree/feat/squeekboard-toggle&#34;&gt;plugin for noctalia-shell&lt;/a&gt; (&lt;a href=&#34;https://github.com/noctalia&#34;&gt;Noctalia&lt;/a&gt;). It&amp;rsquo;s a plugin/ bar widget that adds a bar widget to toggle the &lt;a href=&#34;https://gitlab.gnome.org/World/Phosh/squeekboard&#34;&gt;Squeekboard&lt;/a&gt; on-screen keyboard. Works with 2-in-1 Linux devices.&lt;/p&gt;
 &lt;h3 id=&#34;features&#34;&gt;Features&lt;/h3&gt;
@@ -103,10 +103,18 @@ I just stumbled upon this &lt;a href=&#34;https://blog.networkchuck.com/posts/my
       <guid>https://bl-xt.xyz/projects/</guid>
       <description>&lt;h2 id=&#34;projects-i-am-working-on-right-now&#34;&gt;projects I am working on right now:&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;this website (no shit&amp;hellip;)
+&lt;li&gt;
+&lt;p&gt;this website (no shit&amp;hellip;)
 [x] &lt;del&gt;setting up script to publish&lt;/del&gt;
 [x] &lt;del&gt;theme overhaul&lt;/del&gt;
-[ ] implement gallery&lt;/li&gt;
+[ ] implement gallery&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;studdying&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;lerning more linux stuff&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;</description>
     </item>
   </channel>
