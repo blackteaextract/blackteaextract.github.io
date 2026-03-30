@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Linux on blacktea_extract</title>
-    <link>https://blackteaextract.github.io/tags/linux/</link>
+    <link>https://bl-xt.xyz/tags/linux/</link>
     <description>Recent content in Linux on blacktea_extract</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 30 Mar 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://blackteaextract.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://bl-xt.xyz/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>writing_my_first_plugin</title>
-      <link>https://blackteaextract.github.io/read/writing_my_first_plugin/</link>
+      <link>https://bl-xt.xyz/read/writing_my_first_plugin/</link>
       <pubDate>Mon, 30 Mar 2026 00:00:00 +0000</pubDate>
-      <guid>https://blackteaextract.github.io/read/writing_my_first_plugin/</guid>
+      <guid>https://bl-xt.xyz/read/writing_my_first_plugin/</guid>
       <description>&lt;h3 id=&#34;squeekboard-toggle&#34;&gt;squeekboard toggle&lt;/h3&gt;
 &lt;p&gt;Yesterday I made my first &lt;a href=&#34;https://github.com/blackteaextract/noctalia-plugins/tree/feat/squeekboard-toggle&#34;&gt;plugin for noctalia-shell&lt;/a&gt; (&lt;a href=&#34;https://github.com/noctalia&#34;&gt;Noctalia&lt;/a&gt;). It&amp;rsquo;s a plugin/ bar widget that adds a bar widget to toggle the &lt;a href=&#34;https://gitlab.gnome.org/World/Phosh/squeekboard&#34;&gt;Squeekboard&lt;/a&gt; on-screen keyboard. Works with 2-in-1 Linux devices.&lt;/p&gt;
 &lt;h3 id=&#34;features&#34;&gt;Features&lt;/h3&gt;
