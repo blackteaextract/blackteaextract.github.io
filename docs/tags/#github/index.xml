@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>#Github on blacktea_extract</title>
+    <link>https://bl-xt.xyz/tags/%23github/</link>
+    <description>Recent content in #Github on blacktea_extract</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 14 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://bl-xt.xyz/tags/%23github/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>more_plugin_stuff</title>
+      <link>https://bl-xt.xyz/read/more_plugin_stuff/</link>
+      <pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://bl-xt.xyz/read/more_plugin_stuff/</guid>
+      <description>&lt;p&gt;I made upgrades to my &lt;a href=&#34;https://github.com/noctalia-dev/noctalia-plugins/tree/main/osk-toggle&#34;&gt;noctalia plugin&lt;/a&gt;. It now supports another keyboard!&lt;/p&gt;
+&lt;p&gt;Also I had some fun with another project. &lt;a href=&#34;https://github.com/noctalia-dev/noctalia-plugins/tree/main/not-just-text&#34;&gt;not-just-text&lt;/a&gt; displays&amp;hellip; well not just text :D&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

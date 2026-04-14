@@ -6,8 +6,16 @@
     <description>Recent content in Linux on blacktea_extract</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 30 Mar 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 14 Apr 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://bl-xt.xyz/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>more_plugin_stuff</title>
+      <link>https://bl-xt.xyz/read/more_plugin_stuff/</link>
+      <pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://bl-xt.xyz/read/more_plugin_stuff/</guid>
+      <description>&lt;p&gt;I made upgrades to my &lt;a href=&#34;https://github.com/noctalia-dev/noctalia-plugins/tree/main/osk-toggle&#34;&gt;noctalia plugin&lt;/a&gt;. It now supports another keyboard!&lt;/p&gt;
+&lt;p&gt;Also I had some fun with another project. &lt;a href=&#34;https://github.com/noctalia-dev/noctalia-plugins/tree/main/not-just-text&#34;&gt;not-just-text&lt;/a&gt; displays&amp;hellip; well not just text :D&lt;/p&gt;</description>
+    </item>
     <item>
       <title>making_my_first_plugin</title>
       <link>https://bl-xt.xyz/read/making_my_first_plugin/</link>
