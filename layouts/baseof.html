@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="{{ site.Language.Locale }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
+  <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ if .IsPage }}{{ .Summary | plainify | truncate 160 }}{{ else }}{{ site.Params.description }}{{ end }}{{ end }}">
+  <link rel="canonical" href="{{ .Permalink }}">
+  {{ with site.Home.OutputFormats.Get "rss" }}<link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}" title="{{ site.Title }}">{{ end }}
+  {{ with resources.Get "tea.js" }}{{ with . | minify }}<script>{{ .Content | safeJS }}</script>{{ end }}{{ end }}
+  {{ with resources.Get "style.css" | minify }}<style>{{ .Content | safeCSS }}</style>{{ end }}
+</head>
+<body>
+  <main>
+    {{ if not .IsHome }}<a class="home" href="{{ site.Home.RelPermalink }}">{{ partial "name.html" . }}</a>{{ end }}
+    {{ block "main" . }}{{ end }}
+    <footer>© {{ now.Year }} blxt</footer>
+  </main>
+</body>
+</html>
