@@ -1,10 +1,10 @@
 # bl-xt.xyz
 
-My personal site. Plain Markdown, built by Hugo, deployed by GitHub Actions.
+my personal site: markdown, built by Hugo, deployed by GitHub Actions
 
-## Write a post
+## write a post
 
-1. Create `content/read/<name>.md`:
+1. create `content/read/<name>.md`:
 
    ```markdown
    ---
@@ -12,23 +12,24 @@ My personal site. Plain Markdown, built by Hugo, deployed by GitHub Actions.
    date: 2026-11-25
    ---
 
-   Text in Markdown.
+   text in Markdown.
    ```
 
    (or run `hugo new read/<name>.md`, which starts as a draft: remove `draft: true` to publish)
 
 2. `git add . && git commit -m "new post" && git push`
 
-The site updates about a minute after the push. Images:
+site updates about a minute after the push. 
+Images:
 put them in `static/images/` and link them as `/images/file.jpg`.
 
-## Preview locally (optional)
+## preview locally (optional)
 
 ```sh
 hugo server
 ```
 
-## Where things are
+## what is where?
 
 - `content/` — the posts (`read/`), the about page and the home intro (`_index.md`)
 - `hugo.toml` — title, tagline, links on the home page
