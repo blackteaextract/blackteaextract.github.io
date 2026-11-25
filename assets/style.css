@@ -1,3 +1,7 @@
+/* Atkinson Hyperlegible Next, self-hosted (static/fonts, SIL OFL 1.1) */
+@font-face { font-family: "Atkinson Hyperlegible Next"; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/atkinson-hyperlegible-next-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible Next"; font-style: italic; font-weight: 400; font-display: swap; src: url(/fonts/atkinson-hyperlegible-next-latin-400-italic.woff2) format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible Next"; font-style: normal; font-weight: 600; font-display: swap; src: url(/fonts/atkinson-hyperlegible-next-latin-600-normal.woff2) format("woff2"); }
 :root {
   --bg: #fdfdfc;
   --fg: #1a1a1a;
@@ -26,7 +30,14 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font: 15px/1.65 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font: 15.5px/1.65 "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+/* hovers fade instead of snapping */
+a, button { transition: color .15s ease, text-decoration-color .15s ease; }
+/* a soft cross-fade from page to page (browsers that can, unless motion is turned down) */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .25s; animation-timing-function: ease; }
 }
 main { max-width: 34rem; margin: 0 auto; padding: 6rem 1.25rem 8rem; }
 a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
@@ -65,7 +76,8 @@ html.teabag, html.teabag * { cursor: none !important; }
 html.grab, html.grab * { cursor: grab !important; }
 html.grabbing, html.grabbing * { cursor: grabbing !important; }
 .bag.taken { opacity: .2; }
-.cup-spot { position: relative; height: 0; overflow: hidden; transition: height .5s ease; }
+.bag { transition: opacity .3s ease; }
+.cup-spot { position: relative; height: 0; overflow: hidden; transition: height .55s cubic-bezier(.25, .8, .25, 1); }
 .cup-spot.on { height: 14rem; }
 .cup-ui { position: absolute; right: 0; bottom: .5rem; display: flex; gap: 1rem; font-size: .85em; } /* under the table, clear of the cup */
 .cup-ui button { padding: 0; border: 0; background: none; font: inherit; color: var(--muted); }
