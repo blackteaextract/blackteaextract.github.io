@@ -12,6 +12,9 @@
   --amber: #a8722f;
   --steep: 0;
   --dunks: 0;
+  /* the page's margin either side, growing with wider windows: everything starts and ends on
+     it (the text, the tea table, the nav, [ close ], the footer) */
+  --edge: clamp(1.25rem, 6vw - .5rem, 7rem);
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -42,10 +45,11 @@ a, button { transition: color .15s ease, text-decoration-color .15s ease; }
   @view-transition { navigation: auto; }
   ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .25s; animation-timing-function: ease; }
 }
-/* the column is measured in the text size, so it widens with it (about 70 characters a line).
-   It keeps to the left: on phones it fills the screen, on wider windows the space on its left
-   grows with them (up to 14rem), and so does the space above it */
-main { max-width: 36em; margin-left: clamp(0px, 12vw - 4rem, 14rem); padding: clamp(6rem, 6vw + 2rem, 9rem) 1.25rem 8rem; }
+/* main spans the page between the margins; the text in it keeps to a column on the left,
+   measured in the text size so it widens with it (about 70 characters a line). The space
+   above it grows with wider windows too */
+main { margin: 0 var(--edge); padding: clamp(6rem, 6vw + 2rem, 9rem) 0 8rem; }
+main > * { max-width: 36em; }
 a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
 a:hover { text-decoration-color: currentColor; }
 article a { text-decoration-thickness: 1px; text-decoration-color: color-mix(in srgb, var(--amber) 45%, transparent); }
@@ -63,6 +67,10 @@ header h1 { margin-bottom: .1em; }
 nav { display: flex; flex-wrap: wrap; gap: .25rem 1rem; }
 nav a { text-decoration: none; }
 nav a:hover { color: var(--fg); }
+/* on wider windows the links go over to the right, level with the name, on the footer's right edge */
+@media (min-width: 60rem) {
+  nav { position: absolute; top: clamp(6rem, 6vw + 2rem, 9rem); right: var(--edge); }
+}
 .posts { list-style: none; padding: 0; }
 .posts li { display: flex; justify-content: space-between; gap: 1rem; padding: .45rem 0; border-top: 1px solid var(--line); }
 .posts li:last-child { border-bottom: 1px solid var(--line); }
@@ -77,7 +85,7 @@ img { max-width: 100%; height: auto; }
 .brew[hidden] { display: none; }
 /* down in the bottom right corner of the page (or of the window, when the page is shorter);
    main's bottom padding keeps it clear of the content */
-footer { position: absolute; right: clamp(1.25rem, 4vw, 4rem); bottom: clamp(1.25rem, 4vh, 3rem); color: var(--muted); font-size: .85em; }
+footer { position: absolute; right: var(--edge); bottom: clamp(1.25rem, 4vh, 3rem); color: var(--muted); font-size: .85em; }
 
 /* tea: see assets/tea.js and assets/teabag.js */
 html.teabag, html.teabag * { cursor: none !important; }
@@ -85,6 +93,8 @@ html.grab, html.grab * { cursor: grab !important; }
 html.grabbing, html.grabbing * { cursor: grabbing !important; }
 .bag.taken { opacity: .2; }
 .bag { transition: opacity .3s ease; }
+/* the tea table spans the page from margin to margin */
+main > .cup-spot { max-width: none; }
 .cup-spot { position: relative; height: 0; overflow: hidden; transition: height .55s cubic-bezier(.25, .8, .25, 1); }
 .cup-spot.on { height: 14rem; }
 .cup-ui { position: absolute; right: 0; bottom: .5rem; display: flex; gap: 1rem; font-size: .85em; } /* under the table, clear of the cup */

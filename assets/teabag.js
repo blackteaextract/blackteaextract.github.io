@@ -52,6 +52,7 @@
   // Sizes in rough real proportion: a teaspoon is about eight sugar cubes long
   // (bowl arm + handle), a cup about seven cubes across.
   var CUBE = 20, ARM = 100, TAIL = 55, REST = Math.PI - 0.3, STOP = Math.PI + 0.78;
+  var SCENE = 520; // how far from the table's left end the cup can stand (in reach of the spoon)
   var PIV = 140; // the hinge, from the table's left end: room for a cube left of the bowl
   var HOLD = { x: 4, y: 16 }; // where a carried cube hangs off the pointer
   var GRIP = 40; // a carried spoon is held this far from the end of its handle
@@ -153,21 +154,23 @@
   function ease(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
 
   function lay() {
-    var g = game, r = g.spot.getBoundingClientRect();
-    if (g.ox !== undefined && (r.left !== g.ox || r.top !== g.oy)) {
-      var dx = r.left - g.ox, dy = r.top - g.oy;
+    // The table spans the spot, from the page's left margin to its right one
+    // (L to R): the spoon at its left end, the hand at its right end, the cup
+    // in the first SCENE of it, where a throw reaches.
+    var g = game, r = g.spot.getBoundingClientRect(), w = Math.min(SCENE, r.width), left = r.left;
+    if (g.ox !== undefined && (left !== g.ox || r.top !== g.oy)) {
+      var dx = left - g.ox, dy = r.top - g.oy;
       g.cubes.concat(g.drops).forEach(function (k) { k.x += dx; k.y += dy; });
-      if (g.carry && g.carry.from.x !== undefined) { g.carry.from.x += dx; g.carry.from.y += dy; }
+      if (g.carry && g.carry.from && g.carry.from.x !== undefined) { g.carry.from.x += dx; g.carry.from.y += dy; }
       if (g.hand) { g.hand.x += dx; g.hand.y += dy; }
       if (g.spoon) { g.spoon.bx += dx; g.spoon.by += dy; }
     }
-    g.ox = r.left; g.oy = r.top;
+    g.ox = left; g.oy = r.top;
     g.L = r.left; g.R = r.right; g.ground = r.top + 176;
-    // the hand's palm, where the table ends: a little out into the margin, if the window has one
-    g.wall = g.R + clamp(innerWidth - g.R - 70, 0, 36);
+    g.wall = g.R; // the hand's fingertips, where the table ends
     g.pivot = { x: g.L + PIV, y: g.ground - 2 * CUBE };
     // the cup keeps right of the pile when it can, its handle on the table
-    var hi = Math.max(PIV + 160, r.width - 104);
+    var hi = Math.max(PIV + 160, w - 104);
     g.span = [Math.min(300, hi), hi];
     g.cupTo = clamp(g.cupTo, g.span[0], g.span[1]);
     g.cupAt = clamp(g.cupAt, g.span[0], g.span[1]);
@@ -1155,10 +1158,6 @@
     [[g.L, a - 3], [a + 3, b - 2], [b + 4, g.R]].forEach(function (s, i) {
       pen([[s[0], g.ground], [s[1], g.ground]], { open: true, seed: 50 + i * 3, w: 0.9, color: col.muted, amp: 0.7 });
     });
-    // and on under the hand, fading out
-    var e = g.wall + 110, fade = ctx.createLinearGradient(g.R, 0, e, 0);
-    fade.addColorStop(0, col.muted); fade.addColorStop(1, rgba(col.muted, 0));
-    pen([[g.R + 3, g.ground], [e, g.ground]], { open: true, seed: 59, w: 0.9, color: fade, amp: 0.7 });
   }
 
   // the hand, flat, seen from the side: the wrist at 0,0, the fingers along
