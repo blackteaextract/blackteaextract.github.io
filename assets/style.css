@@ -1,0 +1,71 @@
+:root {
+  --bg: #fdfdfc;
+  --fg: #1a1a1a;
+  --muted: #8a8a8a;
+  --line: #e6e6e3;
+  --code: #f3f3f1;
+  --tea: #f6ecdc;
+  --amber: #a8722f;
+  --steep: 0;
+  --dunks: 0;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111;
+    --fg: #e4e4e2;
+    --muted: #7d7d7d;
+    --line: #262626;
+    --code: #1b1b1b;
+    --tea: #1e1610;
+    --amber: #c99350;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 15px/1.65 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+main { max-width: 34rem; margin: 0 auto; padding: 6rem 1.25rem 8rem; }
+a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+a:hover { text-decoration-color: currentColor; }
+article a { text-decoration-thickness: 1px; text-decoration-color: color-mix(in srgb, var(--amber) 45%, transparent); }
+article a:hover { text-decoration-color: var(--amber); }
+h1, h2, h3 { font-size: 1em; font-weight: 600; margin: 2.5em 0 .5em; }
+h1 { margin-top: 0; }
+p, ul, pre { margin: 0 0 1.1em; }
+ul { padding-left: 1.1em; }
+time, header p, .home, nav a { color: var(--muted); }
+time { font-variant-numeric: tabular-nums; }
+.home { display: inline-block; margin-bottom: 3rem; text-decoration: none; }
+.home:hover { color: var(--fg); }
+header { margin-bottom: 4rem; }
+header h1 { margin-bottom: .1em; }
+nav { display: flex; flex-wrap: wrap; gap: .25rem 1rem; }
+nav a { text-decoration: none; }
+nav a:hover { color: var(--fg); }
+.posts { list-style: none; padding: 0; }
+.posts li { display: flex; justify-content: space-between; gap: 1rem; padding: .45rem 0; border-top: 1px solid var(--line); }
+.posts li:last-child { border-bottom: 1px solid var(--line); }
+.posts a { text-decoration: none; overflow-wrap: anywhere; }
+article > time { display: block; margin: -.4em 0 2em; }
+code { font: .9em ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--code); padding: .1em .3em; border-radius: 3px; }
+pre { background: var(--code); padding: .9rem 1rem; overflow-x: auto; border-radius: 4px; }
+pre code { padding: 0; background: none; }
+img { max-width: 100%; height: auto; }
+.brew { display: block; margin-top: 2.5rem; padding: 0; border: 0; background: none; font: inherit; color: var(--muted); cursor: pointer; }
+.brew:hover { color: var(--fg); }
+.brew[hidden] { display: none; }
+footer { margin-top: 6rem; color: var(--muted); font-size: .85em; }
+
+/* tea: see assets/tea.js */
+.bag { display: inline-block; }
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  body {
+    background: color-mix(in srgb, var(--tea) calc(var(--steep) * 100%), var(--bg));
+    transition: background-color 2s linear;
+  }
+  .bag { color: color-mix(in srgb, var(--amber) calc(var(--dunks) * 12%), currentColor); }
+}

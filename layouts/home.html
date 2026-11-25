@@ -1,0 +1,8 @@
+{{ define "main" }}
+<header>
+  <h1>{{ partial "name.html" . }}</h1>
+  {{ .Content }}
+  <nav>{{ range site.Params.links }}<a href="{{ .url }}">{{ .name }}</a>{{ end }}</nav>
+  <button class="brew" type="button" hidden>[ brew ]</button>
+</header>
+{{ end }}

@@ -1,0 +1,35 @@
+baseURL = "https://bl-xt.xyz/"
+locale = "en"
+title = "blacktea_extract"
+disableKinds = ["taxonomy", "term"]
+enableRobotsTXT = true
+
+[params]
+description = "pessimist in theory, optimist in practice."
+
+# Links on the home page, in this order.
+[[params.links]]
+name = "blog"
+url = "/read/"
+[[params.links]]
+name = "about"
+url = "/about/"
+[[params.links]]
+name = "github"
+url = "https://github.com/blackteaextract"
+[[params.links]]
+name = "pixelfed"
+url = "https://pixelfed.social/blacktea_extract"
+[[params.links]]
+name = "bluesky"
+url = "https://bsky.app/profile/blxt.bsky.social"
+[[params.links]]
+name = "rss"
+url = "/index.xml"
+
+[markup.highlight]
+codeFences = false
+
+[outputs]
+home = ["html", "rss"]
+section = ["html", "rss"]
