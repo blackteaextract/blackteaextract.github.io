@@ -1,3 +1,7 @@
+/* Atkinson Hyperlegible Next, self-hosted (static/fonts, SIL OFL 1.1) */
+@font-face { font-family: "Atkinson Hyperlegible Next"; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/atkinson-hyperlegible-next-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible Next"; font-style: italic; font-weight: 400; font-display: swap; src: url(/fonts/atkinson-hyperlegible-next-latin-400-italic.woff2) format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible Next"; font-style: normal; font-weight: 600; font-display: swap; src: url(/fonts/atkinson-hyperlegible-next-latin-600-normal.woff2) format("woff2"); }
 :root {
   --bg: #fdfdfc;
   --fg: #1a1a1a;
@@ -24,11 +28,24 @@
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
+  position: relative; /* the footer sits in its bottom right corner */
+  min-height: 100vh; min-height: 100dvh;
   background: var(--bg);
   color: var(--fg);
-  font: 15px/1.65 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* 15.5px on phones and small windows, growing with wider screens up to 19px (about 1800px wide) */
+  font: clamp(15.5px, 0.45vw + 11px, 19px)/1.65 "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
-main { max-width: 34rem; margin: 0 auto; padding: 6rem 1.25rem 8rem; }
+/* hovers fade instead of snapping */
+a, button { transition: color .15s ease, text-decoration-color .15s ease; }
+/* a soft cross-fade from page to page (browsers that can, unless motion is turned down) */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .25s; animation-timing-function: ease; }
+}
+/* the column is measured in the text size, so it widens with it (about 70 characters a line).
+   It keeps to the left: on phones it fills the screen, on wider windows the space on its left
+   grows with them (up to 14rem), and so does the space above it */
+main { max-width: 36em; margin-left: clamp(0px, 12vw - 4rem, 14rem); padding: clamp(6rem, 6vw + 2rem, 9rem) 1.25rem 8rem; }
 a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
 a:hover { text-decoration-color: currentColor; }
 article a { text-decoration-thickness: 1px; text-decoration-color: color-mix(in srgb, var(--amber) 45%, transparent); }
@@ -58,19 +75,24 @@ img { max-width: 100%; height: auto; }
 .brew { display: block; margin-top: 2.5rem; padding: 0; border: 0; background: none; font: inherit; color: var(--muted); cursor: pointer; }
 .brew:hover { color: var(--fg); }
 .brew[hidden] { display: none; }
-footer { margin-top: 6rem; color: var(--muted); font-size: .85em; }
+/* down in the bottom right corner of the page (or of the window, when the page is shorter);
+   main's bottom padding keeps it clear of the content */
+footer { position: absolute; right: clamp(1.25rem, 4vw, 4rem); bottom: clamp(1.25rem, 4vh, 3rem); color: var(--muted); font-size: .85em; }
 
 /* tea: see assets/tea.js and assets/teabag.js */
 html.teabag, html.teabag * { cursor: none !important; }
 html.grab, html.grab * { cursor: grab !important; }
 html.grabbing, html.grabbing * { cursor: grabbing !important; }
 .bag.taken { opacity: .2; }
-.cup-spot { position: relative; height: 0; overflow: hidden; transition: height .5s ease; }
+.bag { transition: opacity .3s ease; }
+.cup-spot { position: relative; height: 0; overflow: hidden; transition: height .55s cubic-bezier(.25, .8, .25, 1); }
 .cup-spot.on { height: 14rem; }
 .cup-ui { position: absolute; right: 0; bottom: .5rem; display: flex; gap: 1rem; font-size: .85em; } /* under the table, clear of the cup */
 .cup-ui button { padding: 0; border: 0; background: none; font: inherit; color: var(--muted); }
 .cup-ui button:hover { color: var(--fg); }
 .cup-ui button[hidden] { display: none; }
+.cup-roll { position: absolute; top: 0; width: 313px; height: 176px; max-width: 100%; border: 0; opacity: 0; transition: opacity .6s ease; }
+.cup-roll.on { opacity: 1; }
 .bag { display: inline-block; }
 @supports (color: color-mix(in srgb, red 50%, blue)) {
   body {
