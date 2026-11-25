@@ -8,6 +8,7 @@
   <link rel="canonical" href="{{ .Permalink }}">
   {{ with site.Home.OutputFormats.Get "rss" }}<link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}" title="{{ site.Title }}">{{ end }}
   {{ with resources.Get "tea.js" }}{{ with . | minify }}<script>{{ .Content | safeJS }}</script>{{ end }}{{ end }}
+  {{ with resources.Get "teabag.js" }}{{ with . | minify }}<script>{{ .Content | safeJS }}</script>{{ end }}{{ end }}
   {{ with resources.Get "style.css" | minify }}<style>{{ .Content | safeCSS }}</style>{{ end }}
 </head>
 <body>
