@@ -34,3 +34,4 @@ hugo server
 - `hugo.toml` — title, tagline, links on the home page
 - `layouts/` — the HTML (four small files)
 - `assets/style.css` — all of the styling
+- `assets/tea.js`, `assets/teabag.js` — the tea things (the comment at the top of each says what they do)
