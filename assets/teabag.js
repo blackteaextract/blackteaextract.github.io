@@ -230,6 +230,7 @@
   function leave() {
     if (!game || game.dir < 0) return;
     game.dir = -1; wake();
+    game.spot.classList.add("leaving"); // the buttons fade where they are, not ride the table up
   }
   function gone() {
     var spot = game.spot;
