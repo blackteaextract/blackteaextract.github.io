@@ -98,6 +98,8 @@ main > .cup-spot { max-width: none; }
 .cup-spot { position: relative; height: 0; overflow: hidden; transition: height .55s cubic-bezier(.25, .8, .25, 1); }
 .cup-spot.on { height: 14rem; }
 .cup-ui { position: absolute; right: 0; bottom: .5rem; display: flex; gap: 1rem; font-size: .85em; } /* under the table, clear of the cup */
+.cup-ui { transition: opacity .2s ease; }
+.cup-spot.leaving .cup-ui { opacity: 0; pointer-events: none; }
 .cup-ui button { padding: 0; border: 0; background: none; font: inherit; color: var(--muted); }
 .cup-ui button:hover { color: var(--fg); }
 .cup-ui button[hidden] { display: none; }
