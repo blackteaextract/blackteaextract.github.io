@@ -5,8 +5,6 @@ disableKinds = ["taxonomy", "term"]
 enableRobotsTXT = true
 
 [params]
-description = "pessimist in theory, optimist in practice."
-
 # Links on the home page, in this order.
 [[params.links]]
 name = "blog"

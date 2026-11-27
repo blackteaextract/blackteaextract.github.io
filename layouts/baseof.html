@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
-  <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ if .IsPage }}{{ .Summary | plainify | truncate 160 }}{{ else }}{{ site.Params.description }}{{ end }}{{ end }}">
+  {{ $desc := .Description }}{{ if and (not $desc) .IsPage }}{{ $desc = .Summary | plainify | truncate 160 }}{{ end }}
+  {{ with $desc }}<meta name="description" content="{{ . }}">{{ end }}
   <link rel="canonical" href="{{ .Permalink }}">
   {{ with site.Home.OutputFormats.Get "rss" }}<link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}" title="{{ site.Title }}">{{ end }}
   {{ with resources.Get "tea.js" }}{{ with . | minify }}<script>{{ .Content | safeJS }}</script>{{ end }}{{ end }}
