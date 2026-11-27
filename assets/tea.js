@@ -1,9 +1,5 @@
-// Tea, kept for the whole browser tab (sessionStorage):
-// - steeping: while a mouse moves on the page, the background slowly takes on
-//   a faint tea colour (full strength after 4 minutes). Mouse only.
-// - dunking: hovering the name dips the "_" like a tea bag. Mouse only.
-// - brewing: the [ brew ] button on the home page is a real 4-minute tea
-//   timer; the page steeps to full strength along with it.
+// Per tab: the background steeps while the mouse moves (full after 4 minutes),
+// hovering the name dunks the "_", and [ brew ] is a real 4-minute timer.
 (function () {
   var FULL = 240, IDLE = 1.5, TICK = 0.5, DUNK = 5;
   var mouse = matchMedia("(hover: hover) and (pointer: fine)").matches;

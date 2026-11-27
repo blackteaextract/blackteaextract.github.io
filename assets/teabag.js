@@ -1,70 +1,22 @@
-// The tea bag. Mouse only, and off with reduced motion.
-// Click the "_" in the name to pick the bag up: it becomes the cursor until you
-// click the "_" again (or press Esc). Remembered for the tab (sessionStorage).
-// The paper tag is the pointer (its centre is where you click). The string and
-// the bag hang off it: a small verlet rope whose links only pull (so it goes
-// slack like real string), the bag itself is one stiff segment at the end.
-//
-// Hidden further: holding the bag, circle the mouse quickly (or type "tea") and
-// a little table opens up above the footer: a cup of tea on its saucer, and a
-// spoon balanced on two sugar cubes like a seesaw, bowl down on the near side,
-// handle end up towards the cup. While playing the pointer is the normal one.
-//
-// There are six sugar cubes: one in the spoon, five in a little pile. Press on
-// one to pick it up and let go above the table to put it down there: on the
-// spoon to load or throw it, anywhere else to get it out of the way (over the
-// cup, or off the table, it goes back where it was). One that lands in the
-// empty bowl stays there, one that lands on the spoon slides down into the
-// bowl, and one that lands hard on the handle slams the spoon round (real
-// lever physics, see lever()): the bowl throws its load over the hinge
-// towards the cup. Things knock each other about, bounce off each other and
-// tip off edges; misses stay on the table to be picked up again, and things
-// lying under the spoon hold it up. Cubes in the tea dissolve.
-//
-// A hand comes in at the far end of the table when it's needed (see hand()):
-// whatever flies past the cup it slaps back over it, so a miss stays a miss,
-// and after a cube dissolves it slides the cup somewhere new by its handle.
-//
-// A tea bag steeps in the cup (the tea gets darker while it does), at its real
-// size next to the cubes, its tag hanging out over the rim. Pull it out (by the
-// bag or the tag) and its string and tag dangle and flop about like real ones;
-// drop it on the spoon like a cube, so even the last cube can be thrown, or let
-// it slide into the bowl and throw the bag itself. It never dissolves: let go
-// of it over the cup (or throw it in) and it goes back to steeping.
-//
-// No score, no rounds, just that. Once every cube is in the tea, the spoon
-// can be picked up off its hinge (held by the handle, bowl down) and the tea
-// stirred with it: dip the bowl in over the rim and stir back and forth long
-// enough and something happens (see roll()). [ again ]
-// sets the table again; [ close ] (or Esc, or the "_") puts it all away, bag
-// included, and the normal cursor comes back.
-//
-// Look: drawn by hand with a fine pen, slightly imperfect, in the site's own
-// colours (see "the pen" below).
+// The tea bag cursor (click the "_" in the name) and, while holding it, a hidden
+// tea table (circle the mouse or type "tea"): flick sugar cubes into the cup with
+// a spoon catapult. Mouse only, off with reduced motion.
 (function () {
   if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   var STEP = 1 / 120, G = 1300, AIR = 0.988, ITER = 8, SEG = 6, ROPE = 6, BAG = 20;
-  // the spoon's angle is the direction from the pivot to the bowl: it rests
-  // pointing down-left (bowl on the table) and swings clockwise, up and over,
-  // until it stops at STOP, where the load leaves along the arc's tangent.
-  // Sizes in rough real proportion: a teaspoon is about eight sugar cubes long
-  // (bowl arm + handle), a cup about seven cubes across.
+  // the spoon's angle points from the pivot to the bowl, from REST (bowl down) to STOP
   var CUBE = 20, ARM = 100, TAIL = 55, REST = Math.PI - 0.3, STOP = Math.PI + 0.78;
-  var SCENE = 520; // how far from the table's left end the cup can stand (in reach of the spoon)
-  var PIV = 140; // the hinge, from the table's left end: room for a cube left of the bowl
+  var SCENE = 520, SCENE_MAX = 820; // how far from the table's left end the cup can stand
+  var PIV = 140; // the hinge, from the table's left end
   var HOLD = { x: 4, y: 16 }; // where a carried cube hangs off the pointer
   var GRIP = 40; // a carried spoon is held this far from the end of its handle
-  var STIR = 900, TURNS = 8; // how much stirring (px the bowl moves through the tea, and turns) it takes
+  var STIR = 900, TURNS = 8; // stirring needed: px through the tea, and changes of direction
   var ROLL = "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0";
-  var HS = 1.15; // the hand's size (its outline is drawn about 57 long, see handPts())
-  // the tea bag at real size (a sugar cube is about 1.6 cm, so 12.5 px to the
-  // cm): the bag 5 x 6.2 cm, its tag 2.4 x 1.9 cm, on 14.5 cm of string (KN
-  // links of KL)
+  var HS = 1.15; // the hand's scale
+  // the bag, its tag, and its string (KN links of KL), at 12.5 px to the cm
   var BW = 62, BH = 78, TW = 30, TH = 24, KN = 10, KL = 18;
-  // colours come from the site's CSS (see colors()): ink in --fg, paper in --bg,
-  // tea in --amber, the table and shading in --muted
 
   var root = document.documentElement, dark = matchMedia("(prefers-color-scheme: dark)");
   var cv, ctx, W = 0, H = 0, col = {}, held = false;
@@ -76,8 +28,7 @@
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
 
   // --- the bag on a string ---------------------------------------------------
-  // points: 0 = the tag (follows the mouse), 1..ROPE-1 string, ROPE = top of
-  // the bag (staple), ROPE+1 = bottom of the bag. w = inverse mass.
+  // p: 0 the tag (the pointer), 1..ROPE-1 string, ROPE and ROPE+1 the bag's top and bottom; w: inverse mass
 
   function hang() {
     p = [];
@@ -111,9 +62,7 @@
     }
   }
 
-  // Opening the table takes circles: the mouse has to draw 3.5 quick loops one
-  // way (its direction of travel keeps turning), and the bag has to swing
-  // round with it. Shaking or wiggling turns both ways and cancels out.
+  // opening the table: 3.5 quick loops one way, with the bag swinging round too
   var turn = 0, lastDir = null, lastM = null;
   function unwrap(da) { return da > Math.PI ? da - 2 * Math.PI : da < -Math.PI ? da + 2 * Math.PI : da; }
   function track(dt) {
@@ -146,18 +95,13 @@
     wake();
   }
 
-  // --- the table: a cup and a sugar-cube catapult ----------------------------
-  // It opens up in the page, in a gap just above the footer. Everything on it
-  // lives in window coordinates and is moved along when the page scrolls.
-  // Time runs in fixed steps (STEP), so a throw goes the same on any screen.
+  // --- the table -------------------------------------------------------------
+  // in window coordinates, shifted along on scroll; physics runs in fixed STEPs
 
   function ease(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
 
   function lay() {
-    // The table spans the spot, from the page's left margin to its right one
-    // (L to R): the spoon at its left end, the hand at its right end, the cup
-    // in the first SCENE of it, where a throw reaches.
-    var g = game, r = g.spot.getBoundingClientRect(), w = Math.min(SCENE, r.width), left = r.left;
+    var g = game, r = g.spot.getBoundingClientRect(), w = Math.min(r.width, clamp(r.width * 0.65, SCENE, SCENE_MAX)), left = r.left;
     if (g.ox !== undefined && (left !== g.ox || r.top !== g.oy)) {
       var dx = left - g.ox, dy = r.top - g.oy;
       g.cubes.concat(g.drops).forEach(function (k) { k.x += dx; k.y += dy; });
@@ -167,16 +111,16 @@
     }
     g.ox = left; g.oy = r.top;
     g.L = r.left; g.R = r.right; g.ground = r.top + 176;
-    g.wall = g.R; // the hand's fingertips, where the table ends
+    g.wall = g.R;
     g.pivot = { x: g.L + PIV, y: g.ground - 2 * CUBE };
-    // the cup keeps right of the pile when it can, its handle on the table
+    // right of the pile, the handle on the table
     var hi = Math.max(PIV + 160, w - 104);
     g.span = [Math.min(300, hi), hi];
     g.cupTo = clamp(g.cupTo, g.span[0], g.span[1]);
     g.cupAt = clamp(g.cupAt, g.span[0], g.span[1]);
     cupPlace();
   }
-  // the cup stands on a saucer (dish: its top, left of the cup)
+  // dish: the saucer's top, left of the cup
   function cupPlace() {
     var g = game, cx = g.L + g.cupAt, bottom = g.ground - 12, top = bottom - 96;
     g.cup = { l: cx - 70, r: cx + 70, cx: cx, top: top, surf: top + 8, bottom: bottom, dish: g.ground - 14 };
@@ -197,7 +141,7 @@
     spot.offsetHeight; // so the height transition runs
     spot.classList.add("on");
     spin = turn = 0;
-    root.classList.remove("teabag"); // the normal pointer while playing
+    root.classList.remove("teabag");
     game = { spot: spot, againButton: buttons[0], rise: 0, dir: 1, cubes: [], drops: [], cupAt: 0, cupTo: 0, sway: 0 };
     lay();
     again();
@@ -221,7 +165,6 @@
     g.arm = { a: REST, pa: REST, w: 0, lo: REST, hi: STOP, load: "cube", seed: Math.random() * 100 };
     var r = restPose();
     g.hand = { x: r.x + 90, y: r.y, a: r.a, curl: 0, state: "rest", t: 9, show: 0 };
-    // the five spare cubes, in a little pyramid on the table
     var x0 = g.pivot.x + TAIL + 20;
     [[0, 0], [1, 0], [2, 0], [0.5, 1], [1.5, 1]].forEach(function (o) {
       g.cubes.push(thing("cube", x0 + o[0] * (CUBE + 1), g.ground - CUBE / 2 - o[1] * CUBE, "rest"));
@@ -230,7 +173,7 @@
   function leave() {
     if (!game || game.dir < 0) return;
     game.dir = -1; wake();
-    game.spot.classList.add("leaving"); // the buttons fade where they are, not ride the table up
+    game.spot.classList.add("leaving");
   }
   function gone() {
     var spot = game.spot;
@@ -238,16 +181,14 @@
     setTimeout(function () { spot.remove(); }, 600);
     game = null;
     root.classList.remove("grab", "grabbing");
-    hold(false); // closing the table puts the bag back too: normal cursor again
+    hold(false);
   }
 
-  // seed: its own wobble in the drawing, kept wherever it goes
+  // seed: its own wobble in the drawing
   function thing(kind, x, y, state) {
     return { kind: kind, x: x, y: y, vx: 0, vy: 0, ang: 0, va: 0, state: state || "fly", t: 0, seed: Math.random() * 100 };
   }
-  // where a carried thing can be let go: anywhere above the table, clear of
-  // what's under it (so a cube can be put down out of the spoon's way), but
-  // not on or over the cup: it can only get in there by being thrown
+  // where a carried thing can be dropped: above the table, not over the cup
   function zone(x, y, kind) {
     var g = game;
     if (!g || g.rise !== 1) return false;
@@ -256,8 +197,7 @@
     if (cx + w > c.l - 10 && cx - w < c.r + 34) return false;
     return (bag ? b.y + BH / 2 : y + HOLD.y + CUBE / 2) < surface(cx, w) - 6;
   }
-  // the highest thing under something 2w wide at cx: the table or the saucer,
-  // the hinge, the spoon (or what's in it), things lying about
+  // the highest thing under something 2w wide at cx
   function surface(cx, w) {
     var g = game, q = g.pivot, t = floorAt(cx), s;
     if (Math.abs(cx - q.x) < CUBE / 2 + w) t = Math.min(t, q.y);
@@ -274,17 +214,13 @@
     game.cubes.push(k);
     return k;
   }
-  // the steeping bag hangs in the tea, bobbing a little (with a dip when it
-  // has just gone in); its string goes out over the rim, the tag hanging outside
+  // the steeping bag bobs in the tea, its tag hanging outside the cup
   function steep(k, c) {
     var dip = 8 * Math.exp(-k.t * 3) * Math.cos(k.t * 7);
     k.x = c.cx - 18; k.y = c.bottom - 14 - BH / 2 + dip; k.ang = 0.03 + Math.sin(k.t * 1.3) * 0.03;
-    // the tag hangs down the outside of the cup
     k.tag = { x: c.l - 9, y: c.top + 46, ang: 0.08 };
   }
-  // how far a thing reaches down from its centre at its current angle: a cube
-  // on its corner stands taller than one on its face; a bag lying on its side
-  // is lower than a standing one. wide: the same, sideways
+  // how far a thing reaches down (half) and sideways (wide) from its centre at its angle
   function half(k) {
     var c = Math.abs(Math.cos(k.ang)), s = Math.abs(Math.sin(k.ang));
     return k.kind === "bag" ? BH / 2 * c + BW / 2 * s : CUBE / 2 * (c + s);
@@ -293,14 +229,10 @@
     var c = Math.abs(Math.cos(k.ang)), s = Math.abs(Math.sin(k.ang));
     return k.kind === "bag" ? BW / 2 * c + BH / 2 * s : CUBE / 2 * (c + s);
   }
-  // a carried bag is held by its top, a little under the pointer at x, y, and swings
+  // a carried bag hangs by its top under the pointer
   function bagAt(x, y) { var d = BH / 2 + 4, a = game.sway; return { x: x - Math.sin(a) * d, y: y + Math.cos(a) * d, ang: a }; }
-  // what something falling at x lands on, if not on something else: the
-  // saucer left of the cup, or the table
   function floorAt(x) { var c = game.cup; return x > c.l - 24 && x < c.l ? c.dish : game.ground; }
-  // touching the table (or something lying on it) at height floor: bounce a
-  // little, slide with friction, roll with the slide, and tip over onto the
-  // nearest flat side. Only once it has really stopped does it rest.
+  // on the floor: bounce, slide and tip onto a flat side, then rest once still
   function settle(k, floor, dt) {
     var bag = k.kind === "bag";
     k.y = floor - half(k);
@@ -317,7 +249,7 @@
     }
   }
   function overCup(x, y) { var c = game.cup; return x > c.l - 10 && x < c.r + 10 && y < c.bottom && y > c.top - 160; }
-  // somewhere new for the cup: a real move, clear of anything on the table
+  // a new spot for the cup, clear of anything on the table
   function place() {
     var g = game, s = g.span;
     for (var n = 0; n < 16; n++) {
@@ -327,8 +259,7 @@
     }
     return g.cupTo;
   }
-  // the thing under the pointer: the topmost one lying about (or barely
-  // moving), the steeping bag, or the bowl's load
+  // what the pointer would pick up: a cube index, "bowl", "spoon" or null
   function under(x, y) {
     var g = game, best = -1;
     if (g.roll) return null;
@@ -338,11 +269,14 @@
         (best < 0 || k.y < g.cubes[best].y)) best = i;
     });
     if (best >= 0) return best;
-    if (g.tag) { // or by its tag
+    var inBowl = g.arm.load === "bag" && still(g.arm);
+    if (g.tag) {
       var tx = (g.tag[KN].x + g.tag[KN + 1].x) / 2, ty = (g.tag[KN].y + g.tag[KN + 1].y) / 2;
-      for (var j = 0; j < g.cubes.length; j++) {
-        if (g.cubes[j].kind === "bag" && (g.cubes[j].state === "rest" || g.cubes[j].state === "fly") &&
-          Math.abs(tx - x) < TW / 2 && Math.abs(ty - y) < TW / 2) return j;
+      if (Math.abs(tx - x) < TW / 2 && Math.abs(ty - y) < TW / 2) {
+        if (inBowl) return "bowl";
+        for (var j = 0; j < g.cubes.length; j++) {
+          if (g.cubes[j].kind === "bag" && (g.cubes[j].state === "rest" || g.cubes[j].state === "fly")) return j;
+        }
       }
     }
     for (var i = 0; i < g.cubes.length; i++) {
@@ -351,10 +285,15 @@
         (Math.abs(k.x - x) < BW / 2 && Math.abs(k.y - y) < BH / 2))) return i;
     }
     if (g.arm.load && still(g.arm)) {
-      var b = bowl(g.arm.a);
+      var a = g.arm.a, b = bowl(a);
       if (Math.abs(b.x - x) < CUBE && Math.abs(b.y - CUBE / 2 - y) < CUBE) return "bowl";
+      if (inBowl) { // anywhere on the bag, as drawn
+        var up = BH / 2 + 2, dx = x - (b.x - Math.sin(a) * up), dy = y - (b.y + Math.cos(a) * up);
+        var u = dx * Math.cos(a) + dy * Math.sin(a), v = -dx * Math.sin(a) + dy * Math.cos(a);
+        if (Math.abs(u) < BW / 2 + 4 && Math.abs(v) < BH / 2 + 4) return "bowl";
+      }
     }
-    // once every cube is in the tea: the empty spoon, by its bowl or handle
+    // the empty spoon, once every cube is in
     if (!g.arm.load && !g.arm.gone && still(g.arm) && !cubesLeft()) {
       var e = bowl(g.arm.a), t = tail(g.arm.a), vx = t.x - e.x, vy = t.y - e.y;
       var f = clamp(((x - e.x) * vx + (y - e.y) * vy) / (vx * vx + vy * vy), 0, 1);
@@ -362,7 +301,6 @@
     }
     return null;
   }
-  // press on a thing to pick it up
   function pick(x, y) {
     var g = game, i = under(x, y);
     if (i === null) return false;
@@ -377,7 +315,7 @@
     g.carry = { kind: k.kind, from: k.state === "steep" ? "cup" : { x: k.x, y: k.y }, seed: k.seed };
     return true;
   }
-  // let go: above the table it drops, anywhere else it goes back
+  // dropped above the table, otherwise back where it came from
   function release(x, y) {
     var g = game, c = g.carry, b = bagAt(x, y), k;
     if (!c) return;
@@ -389,13 +327,13 @@
       k = thing("bag", 0, 0, "steep"); g.cubes.push(k);
     } else if (c.from === "bowl" && !g.arm.load && still(g.arm)) {
       g.arm.load = c.kind; g.arm.seed = c.seed; return;
-    } else if (c.from === "bowl" || c.from === "cup") { // its place is taken: onto the table
+    } else if (c.from === "bowl" || c.from === "cup") { // its place is taken
       k = drop(c.from === "bowl" ? g.pivot.x + TAIL + 30 : g.cup.l - 40, g.ground - 80, c.kind, 0, true);
-    } else k = drop(c.from.x, c.from.y, c.kind, 0, true); // falls into place, or onto whatever is there now
+    } else k = drop(c.from.x, c.from.y, c.kind, 0, true);
     k.seed = c.seed;
   }
 
-  // the top of the spoon at x (or of what lies in its bowl), null past either end
+  // the top of the spoon (or its load) at x, null past either end
   function loadTop(load) { return load === "bag" ? BH + 2 : load ? 22 : 3; }
   function spoonAt(x, a, load) {
     if (game.arm.gone) return null;
@@ -405,31 +343,22 @@
     return y - (x < b.x + 12 ? loadTop(load) : 3);
   }
 
-  // the highest bit of spoon (or load) under something 2w wide at x: a wide
-  // bag lies across the load in the bowl, it doesn't drop off it and bounce
+  // spoonAt across 2w, so a wide bag rests on the load instead of slipping off
   function spoonUnder(x, w, a, load) {
     var t = null;
     for (var e = -w; e <= w; e += w) { var s = spoonAt(x + e, a, load); if (s !== null && (t === null || s < t)) t = s; }
     return t;
   }
 
-  // The spoon is a rigid lever on the hinge: angle a, spin w (positive = the
-  // bowl going up and over). Weights: the bowl end, the light handle, and the
-  // load in the bowl. Gravity pulls the bowl back down onto the table; a thing
-  // landing on it gives it a kick (an impulse) that depends on how fast it
-  // lands and how far from the hinge. The load only flies when the handle
-  // hits the table (or something lying there) and the spoon stops dead: then
-  // it carries on with the bowl's speed. A soft drop just rocks the spoon.
+  // The spoon is a rigid lever: angle a, spin w (+ = bowl up and over). The load
+  // flies only when the handle hits bottom and the spoon stops dead.
   var M = { bowl: 0.3, handle: 0.1, load: 0.6, slam: 3 };
   function inertia(arm) { return M.bowl * ARM * ARM + M.handle * TAIL * TAIL / 4 + (arm.load ? M.load * ARM * ARM : 0); }
   function torque(arm) {
     var c = Math.cos(arm.a);
     return G * ((M.bowl + (arm.load ? M.load : 0)) * c * ARM - M.handle * c * TAIL / 2);
   }
-  // things lying under the spoon hold it up: how low the bowl can come (lo)
-  // and how far down the handle can (hi, and what's in its way). Each top
-  // corner of each thing is checked against the arc swept by the bowl arm or
-  // by the handle.
+  // how far things lying under the spoon let it swing: [bowl limit, handle limit, thing under the handle]
   function limits(a) {
     var q = game.pivot, lo = REST, hi = STOP, under = null;
     game.cubes.forEach(function (k) {
@@ -459,11 +388,11 @@
       arm.a = arm.lo;
       arm.w = arm.w < -0.6 ? -arm.w * 0.3 : 0;
     }
-    if (arm.a > arm.hi) { // the handle hits the table: the spoon stops dead
+    if (arm.a > arm.hi) { // the handle hits: the spoon stops dead
       arm.a = arm.hi;
       if (arm.load && arm.w > 0) fling(arm);
       var k = lim[2];
-      if (k && arm.w > 1) { // ... on something lying there, and swats it out of the way
+      if (k && arm.w > 1) { // and swats what's under it
         k.state = "fly"; k.vx += 60 + arm.w * 25; k.vy = -60 - arm.w * 15; k.va += 6;
       }
       arm.w = -arm.w * 0.2;
@@ -477,25 +406,22 @@
     arm.load = null;
     game.cubes.push(k);
   }
-  // a thing hits the spoon rx from the hinge: push the spoon round, bounce
-  // the thing, a little away from the hinge. Slow ones just lie on it.
+  // a thing lands on the spoon rx from the hinge; slow ones just lie on it
   function hit(k, rx) {
     var arm = game.arm, I = inertia(arm), vs = arm.w * rx, vrel = k.vy - vs;
     if (vrel <= 0) return;
-    var soft = k.kind === "bag" ? 150 : 60; // a soft paper bag doesn't bounce much
+    var soft = k.kind === "bag" ? 150 : 60;
     if (vrel < soft) { k.vy = vs; return; }
     var J = 1.3 * vrel / (1 / M.slam + rx * rx / I);
     arm.w += J * rx / I;
     if ((arm.a <= arm.lo + 1e-3 && arm.w < 0) || (arm.a >= arm.hi - 1e-3 && arm.w > 0)) {
-      arm.w = 0; k.vy = -0.3 * vrel; // the table takes it
+      arm.w = 0; k.vy = -0.3 * vrel; // against a stop: the table takes it
     } else k.vy -= J / M.slam;
-    // knocked a little away from the hinge, and set spinning, the harder the more
     var kick = Math.min(1, (vrel - soft) / 180) * (rx > 0 ? 1 : -1);
     k.vx += kick * 50; k.va += kick * 6;
   }
   function still(arm) { return !arm.gone && arm.a <= arm.lo + 0.001 && Math.abs(arm.w) < 0.01; }
 
-  // a splash out of the cup at x
   function splash(x, n) {
     var c = game.cup;
     game.splash = { x: x, t: 0 };
@@ -505,11 +431,7 @@
     }
   }
 
-  // Things against each other. A bag weighs about two cubes. They're boxes
-  // pushed apart along the side they overlap least on, and trade speed along
-  // it (a little bouncy, restitution 0.3), with a bit of spin from the rub.
-  // A lying thing only gives way to a real knock; then it flies too, and
-  // whatever lay on it loses its footing.
+  // boxes pushed apart along their shallower overlap; a lying thing only moves for a real knock
   var MASS = { cube: 1, bag: 2 };
   function bump(a, b) {
     var dx = b.x - a.x, dy = b.y - a.y;
@@ -526,19 +448,18 @@
       var rub = clamp((a.vy - b.vy) * 0.02, -4, 4);
       a.va -= n * rub; b.va += n * rub;
       if (lying) { b.state = "fly"; b.t = 0; b.vy = -Math.min(60, J / mb * 0.15); }
-    } else if (!lying) { // one onto the other, both on the move
+    } else if (!lying) { // stacked, both moving
       n = dy < 0 ? -1 : 1; vrel = (a.vy - b.vy) * n;
-      if (n > 0) a.y -= oy; else b.y -= oy; // the upper one is lifted off, the lower one stays on what it's on
+      if (n > 0) a.y -= oy; else b.y -= oy;
       if (vrel <= 0) return;
-      if (vrel < 80) { a.vy = b.vy = (ma * a.vy + mb * b.vy) / (ma + mb); return; } // gently: one just lies on the other
+      if (vrel < 80) { a.vy = b.vy = (ma * a.vy + mb * b.vy) / (ma + mb); return; } // gently: it just lies on it
       J = 1.2 * vrel / im;
       a.vy -= n * J / ma; b.vy += n * J / mb;
       var slip = clamp((a.vx - b.vx) * 0.02, -4, 4);
       a.va += n * slip; b.va -= n * slip;
     }
   }
-  // landing hard on things lying there: off their middle it shoves them
-  // aside (and itself the other way), and they may go flying
+  // landing hard on things lying there shoves them aside
   function knock(k, under) {
     var w = wide(k), m = MASS[k.kind];
     under.forEach(function (r) {
@@ -548,8 +469,7 @@
       k.vx -= push * 0.5 * MASS[r.kind] / m;
     });
   }
-  // lying on things whose tops don't reach under its middle: which way it
-  // tips (-1 left, 1 right), or 0 if it's held up (or on the table)
+  // which way k tips off what's under it (-1 left, 1 right), 0 if held up
   function overhang(k, under) {
     if (!under.length) return 0;
     var lo = Infinity, hi = -Infinity;
@@ -557,13 +477,12 @@
     return k.x < lo - 0.5 ? -1 : k.x > hi + 0.5 ? 1 : 0;
   }
 
-  // something flying: the spoon, the cup, the hinge, the table and the
-  // things lying on it. Returns false when it is gone (into the bowl).
+  // false once it has gone into the bowl
   function fly(k, dt) {
     var g = game, arm = g.arm, q = g.pivot, px = k.x, py = k.y, h, w;
     k.vy += G * dt; k.x += k.vx * dt; k.y += k.vy * dt; k.ang += k.va * dt;
     h = half(k); w = wide(k);
-    if (k.pop && k.vy >= 0) { k.pop = false; slap(k); } // flicked up by the hand: now over the cup
+    if (k.pop && k.vy >= 0) { k.pop = false; slap(k); } // flicked up by the hand: slapped at the top
     // the load in the bowl stops things sliding down the spoon
     if (arm.load) {
       var b = bowl(arm.a), lt = spoonAt(b.x, arm.a, arm.load);
@@ -571,8 +490,7 @@
         k.x = b.x + 12 + w; k.vx = Math.abs(k.vx) * 0.3;
       }
     }
-    // the spoon: measured where it was and where it is, so a fast swing
-    // can't pass through what lies on it
+    // checked before and after the swing, so a fast one can't pass through
     var sy = spoonUnder(k.x, w, arm.a, arm.load), sy0 = spoonUnder(px, w, arm.pa, arm.load);
     if (sy0 === null) sy0 = sy;
     if (sy !== null && py + h <= sy0 + 3 && k.y + h >= sy) {
@@ -584,11 +502,11 @@
       }
       k.y = sy - h;
       hit(k, rx);
-      // lying on it: slide down the slope, turning flat onto it
+      // slide down the slope, turning flat onto it
       k.vx += G * s / (1 + s * s) * dt; k.vx *= Math.exp(-dt * 1.5);
       var lie = Math.atan(s), flat = lie + Math.round((k.ang - lie) / (Math.PI / 2)) * (Math.PI / 2);
       k.va += ((flat - k.ang) * 60 - k.va * 10) * dt;
-    } else if (k.x !== px && !arm.gone) { // slid into the spoon from the side: stopped
+    } else if (k.x !== px && !arm.gone) { // into the spoon from the side
       var b0 = bowl(arm.a), t0 = tail(arm.a);
       if (k.x + w > b0.x - 19 && k.x - w < t0.x + 3) {
         var ly = b0.y + (t0.y - b0.y) * clamp((k.x - b0.x) / (t0.x - b0.x), 0, 1);
@@ -597,13 +515,11 @@
     }
     cup(k, px, py);
     if (k.state !== "fly") return true;
-    // the two cubes under the hinge
+    // the hinge
     if (k.y + h > q.y + 2 && Math.abs(k.x - q.x) < CUBE / 2 + w) {
       var side = px < q.x ? -1 : 1;
       k.x = q.x + side * (CUBE / 2 + w); k.vx = side * Math.abs(k.vx) * 0.35;
     }
-    // the table, or the top of something lying on it (landing hard knocks it,
-    // landing off its edge tips over); anything else it runs into, it bumps
     var floor = floorAt(k.x), under = [];
     g.cubes.forEach(function (r) {
       if (r === k || (r.state !== "rest" && r.state !== "fly")) return;
@@ -617,27 +533,24 @@
       if (under.length && k.vy > 260) knock(k, under);
       settle(k, floor, dt);
       var tip = overhang(k, under);
-      // its middle is past the edge of what's under it: it goes over (unless
-      // the end of the table holds it up)
       if (tip && (tip < 0 ? k.x - w > g.L + 0.5 : k.x + w < g.wall - 0.5)) {
         k.state = "fly"; k.vx += tip * 260 * dt; k.va += tip * 12 * dt;
       }
     }
-    // the ends of the table: nothing gets lost. On the right the hand is there to slap it back
+    // the table's ends; on the right the hand slaps it back
     if (k.x < g.L + w) { k.x = g.L + w; k.vx = Math.abs(k.vx) * 0.4; }
     if (k.x > g.wall - w) { k.x = g.wall - w; if (k.vx > 40) slap(k); else k.vx = Math.min(k.vx, 0); }
     if (k.y - h > g.ground) k.y = g.ground - h;
     return true;
   }
-  // the cup is solid: in at the top, off the rim, off the handle, not
-  // through the sides
+  // in at the top, off the rim and handle, not through the sides
   function cup(k, px, py) {
     var g = game, c = g.cup, h = half(k), w = wide(k), open = k.x > c.l + 4 && k.x < c.r - 4, hr = c.r + 30;
     if (open && py < c.top && k.y >= c.top) {
-      if (k.kind === "bag") { // the bag, back in the tea
+      if (k.kind === "bag") {
         k.state = "steep"; k.t = 0; steep(k, c);
         g.ripple = Math.min(6, g.ripple + 3); splash(k.x, 3);
-      } else { // plop
+      } else {
         k.state = "in"; k.t = 0; k.vy = 40; k.vx *= 0.1;
         g.ripple = Math.min(6, g.ripple + 4); splash(k.x, 6);
         g.shuffle = 0.6;
@@ -645,7 +558,7 @@
       g.stir = 1;
       return;
     }
-    if (!open && py + h <= c.top && k.y + h > c.top && k.x + w > c.l && k.x - w < c.r) { // the rim: it tips off
+    if (!open && py + h <= c.top && k.y + h > c.top && k.x + w > c.l && k.x - w < c.r) { // the rim
       var out = k.x < c.cx ? -1 : 1;
       k.y = c.top - h; k.vy = -Math.abs(k.vy) * 0.35; k.vx = out * Math.max(out * k.vx, 40); k.va = out * 4;
     } else if (py + h <= c.top + 10 && k.y + h > c.top + 10 && k.x > c.r && k.x - w < hr) { // the handle
@@ -658,12 +571,8 @@
     }
   }
 
-  // --- the spoon, carried: stirring the tea ---------------------------------
-  // Held by the handle it hangs bowl down under the pointer, swinging a little
-  // as it's moved (like a carried bag). The bowl only gets into the cup over
-  // the rim, and then stays inside it (it can't go through the sides or the
-  // bottom: the handle slides through the fingers); outside the cup it stays
-  // out, and off the table. Moving it back and forth in the tea stirs it.
+  // --- stirring --------------------------------------------------------------
+  // the carried spoon's bowl gets into the cup only over the rim, then stays inside
   function spoonCarry(dt) {
     var g = game, c = g.cup, s = g.spoon, L = ARM + TAIL - GRIP;
     var f = Math.min(1, dt * 30), px = s.bx, py = s.by;
@@ -671,8 +580,7 @@
     if (s.inCup && by < c.top) s.inCup = false;
     else if (!s.inCup && py <= c.top && by > c.top && bx > c.l + 12 && bx < c.r - 12) s.inCup = true;
     if (s.inCup) {
-      // the whole bowl (19 by 8, turned along the spoon) stays inside: off the
-      // sides, off the bottom, and up off the rounded corners where they meet
+      // the whole bowl (19 by 8, turned) stays inside, clear of the rounded corners
       var a = spoonAng(bx, by, c), ca = Math.abs(Math.cos(a)), sa = Math.abs(Math.sin(a));
       var ex = 19 * ca + 8 * sa + 4, ey = 19 * sa + 8 * ca + 3;
       bx = clamp(bx, c.l + ex, c.r - ex);
@@ -693,22 +601,19 @@
     g.ripple = Math.min(6, g.ripple + Math.abs(dx) * 0.08); g.stir = 1;
     if (g.stirred > STIR && s.turns >= TURNS) roll();
   }
-  // which way the spoon points (from the handle to the bowl at bx, by): up
-  // towards the pointer, but never upside down (the pointer pushed down below
-  // where the bowl can go), and in the cup c, out over its rim, not through it
+  // handle to bowl: towards the pointer, never upside down, and out over the rim of cup c
   function spoonAng(bx, by, c) {
     var a = Math.atan2(Math.max(by - m.y, 60), bx - m.x);
     if (!c || by <= c.top) return a;
     var d = by - c.top, xr = clamp(bx - d * Math.cos(a) / Math.sin(a), c.l + 6, c.r - 6);
     return Math.atan2(d, bx - xr);
   }
-  // the spoon goes back on its hinge
   function putSpoon() {
     var arm = game.arm;
     arm.gone = false; arm.a = arm.pa = REST; arm.w = 0;
     game.spoon = null;
   }
-  // stirred enough: the table fades away and a video takes its place
+  // stirred enough: the table fades and a video takes its place
   function roll() {
     var g = game, c = g.cup;
     g.carry = null; putSpoon(); g.roll = 1e-3;
@@ -721,34 +626,22 @@
   }
 
   // --- the hand --------------------------------------------------------------
-  // Someone's hand at the far end of the table, its arm coming in from the
-  // right. A pose is the wrist (x, y) and the direction a from the wrist to
-  // the fingertips; curl is how far the fingers are bent (0 flat, 1 a grip).
-  // It's only there while needed: a moment after it's done it slides off to
-  // the right and fades away (show). At rest it lies on its side, the
-  // fingertips where the table ends (g.wall). When something is going to fly
-  // past the cup to the end of the table it stands up there, swings, and slaps
-  // the thing back high over the cup to land on your side (lob()); one too low
-  // to get over from there it flicks straight up first, and slaps it over at
-  // the top. When the cup has to move, it takes it by the handle and slides it
-  // there, but only while nothing is flying, so the cup never moves under a
-  // throw.
+  // Slaps back whatever flies past the cup and moves the cup by its handle (only
+  // while nothing is flying). A pose: wrist x, y and direction a to the fingertips.
   function norm(a) { return a - 2 * Math.PI * Math.round(a / (2 * Math.PI)); }
   function restPose() { var g = game; return { x: g.wall + 58 * HS, y: g.ground - 12.5 * HS, a: Math.PI }; }
-  // standing up at the end of the table, its edge to a thing at height y;
-  // lean > 0 is drawn back for the swing, lean < 0 is the follow-through
+  // standing at the table's end for a thing at height y; lean > 0 drawn back, < 0 follow-through
   function chop(y, lean) {
     var g = game;
     return { x: g.wall + 12 * HS + lean * 18, y: Math.min(y + 30 * HS, g.ground - 13 * HS) + Math.min(0, lean) * 10,
       a: -Math.PI / 2 + (lean > 0 ? lean * 0.3 : lean) };
   }
-  // the fingertips flicked up a little, for something sliding into them
+  // fingertips flicked up, for something sliding in
   function flick() { var r = restPose(); return { x: r.x - 4, y: r.y - 2, a: Math.PI + 0.35 }; }
-  // holding the cup by its handle (from where the cup is, so it follows it)
+  // holding the cup by its handle
   function grip() { var g = game; return { x: g.L + g.cupAt + 136, y: g.ground - 67, a: Math.PI }; }
 
-  // the first thing about to reach the end of the table, and when and how
-  // high: thrown on as it is, not landing, not hitting the cup on the way
+  // when and how high the first flying thing will reach the table's end
   function threat() {
     var g = game, c = g.cup, best = null;
     g.cubes.forEach(function (k) {
@@ -763,8 +656,7 @@
     });
     return best;
   }
-  // a throw from x, y that stays clear of the cup (h: how far the thing
-  // reaches out from its centre, however it turns) until it lands
+  // whether a throw stays clear of the cup until it lands (h: the thing's reach)
   function clears(x, y, vx, vy, h) {
     var g = game, c = g.cup, dt = 1 / 120;
     for (var t = 0; t < 3; t += dt) {
@@ -774,13 +666,11 @@
     }
     return true;
   }
-  // slapped back over the cup, to land between the spoon and the cup (not on
-  // the spoon: that would throw what's in it). With no room there, into the
-  // empty bowl, or else past the spoon to the end of the table. Higher and
-  // higher till it clears the cup.
+  // back over the cup: between spoon and cup (not on the spoon, that would throw
+  // its load), else into the empty bowl, else the table's left end
   function lob(k) {
     var g = game, c = g.cup, bag = k.kind === "bag";
-    var h = bag ? Math.hypot(BW, BH) / 2 : 15, land = g.ground - (bag ? BW / 2 : CUBE / 2); // h: its reach, however it turns
+    var h = bag ? Math.hypot(BW, BH) / 2 : 15, land = g.ground - (bag ? BW / 2 : CUBE / 2);
     var lo = g.pivot.x + TAIL + 15, hi = c.l - h - 8, b = bowl(REST).x, aims = [];
     if (hi >= lo) aims.push(function () { return lo + (hi - lo) * Math.random(); });
     if (!g.arm.load && still(g.arm)) aims.push(function () { return b + 4; });
@@ -795,34 +685,29 @@
     }
     return false;
   }
-  // a thing reaches the end of the table: the hand's there
   function slap(k) {
     var g = game, hd = g.hand;
     hd.flick = hd.state !== "ready" && k.y > g.ground - 40;
-    // lob: over the cup it passes in front of or behind whatever else is
-    // flying (see bump()), so nothing knocks it in on the way
+    // a lobbed thing passes through other flying things (see bump())
     k.lob = lob(k);
-    if (!k.lob && !k.popped) { // too low to get over the cup from here: flicked
-      // straight up first (once), and slapped over at the top (see fly())
+    if (!k.lob && !k.popped) { // too low to clear the cup: flicked straight up first
       k.pop = k.popped = true; k.vx = -5;
       k.vy = -Math.sqrt(2 * G * Math.max(20, k.y - (g.cup.top - half(k) - 60)));
       hd.flick = false;
-    } else if (!k.lob) { k.vx = -15; k.vy = Math.max(k.vy, 0) * 0.3; } // no way at all: stopped, and it drops
+    } else if (!k.lob) { k.vx = -15; k.vy = Math.max(k.vy, 0) * 0.3; } // no way over: it drops
     k.va = -(3 + Math.random() * 6);
     hd.hy = k.y; hd.state = "follow"; hd.t = 0;
   }
   function hand(dt) {
     var g = game, hd = g.hand, th = g.rise === 1 ? threat() : null, goal, rate = 8, curl = 0;
-    // what could still come down in or by the cup: moving sideways, going up,
-    // or up above the rim (something lying on the spoon, or rocking on another
-    // thing, is "fly" too, but isn't going anywhere)
+    // anything that could still come down by the cup ("fly" includes things just rocking)
     var flying = g.cubes.some(function (k) {
       return k.state === "fly" && (Math.abs(k.vx) > 60 || k.vy < -60 || k.y + half(k) < g.cup.top);
     });
     function to(s) { hd.state = s; hd.t = 0; }
     hd.t += dt;
     if (hd.state === "follow") { if (hd.t > 0.2) to("rest"); }
-    else if (th) { if (hd.state !== "ready") to("ready"); } // lets go of the cup if it has to
+    else if (th) { if (hd.state !== "ready") to("ready"); }
     else if (hd.state === "ready") to("rest");
     if (hd.state === "rest" && Math.abs(g.cupTo - g.cupAt) > 0.5) to("fetch");
     if (hd.state === "ready") {
@@ -839,8 +724,8 @@
       if (!flying) g.cupAt += clamp(d, -v * dt, v * dt);
       if (Math.abs(g.cupTo - g.cupAt) < 0.3) { g.cupAt = g.cupTo; to("rest"); }
       else curl = 1;
-      goal = grip(); rate = 1 / dt; // holding on
-    } else { // done: it stays a moment, then goes
+      goal = grip(); rate = 1 / dt;
+    } else { // stays a moment, then goes
       goal = restPose();
       if (hd.t > 0.8) goal.x += 90;
     }
@@ -860,9 +745,7 @@
     g.stir = Math.max(0, g.stir - dt);
     if (g.splash) g.splash.t += dt;
     if (g.cubes.some(function (k) { return k.state === "steep"; })) g.brew = Math.min(1, g.brew + dt / 90);
-    // the cup is moved somewhere else once something dissolved in it (by the
-    // hand, see hand()), taking along what sits on its saucer and pushing
-    // aside what's in the way
+    // after a cube dissolves the cup moves, carrying what's on its saucer, pushing aside the rest
     if (g.shuffle > 0 && (g.shuffle -= dt) <= 0) g.cupTo = place();
     var dish = g.cubes.filter(function (k) {
       return k.state === "rest" && k.x > c.l - 24 && k.x < c.l && Math.abs(k.y + half(k) - c.dish) < 2;
@@ -892,12 +775,12 @@
       k.t += dt;
       if (k.state === "steep") { steep(k, c); return true; }
       if (k.state === "fly") return fly(k, dt);
-      if (k.state === "in") { // sinking and dissolving, a few bubbles coming up
+      if (k.state === "in") { // dissolving
         k.y = Math.min(k.y + k.vy * dt, c.bottom - 12); k.x = clamp(k.x, c.l + 14, c.r - 14);
         if (k.t < 1.4 && Math.random() < dt * 6) g.drops.push({ bub: true, x: k.x + (Math.random() - 0.5) * 12, y: k.y - 4, vy: -30 - Math.random() * 20, t: 0 });
         return k.t < 1.8;
       }
-      // resting until picked up again; one whose support was taken away falls
+      // resting; falls if its support is gone
       var h = half(k), fl = floorAt(k.x);
       if (k.y + h > fl + 1) k.y = fl - h; // the saucer slid under it
       else if (k.y + h < fl - 1) {
@@ -912,13 +795,8 @@
     tagStep(dt);
   }
 
-  // The bag's string and tag: a rope like the cursor bag's (0 = the top of
-  // the bag, 1 to KN-1 string, KN = where the string meets the tag, KN+1 =
-  // the far edge of the tag: the tag is a stiff card between those two),
-  // hanging off the bag wherever it is: lying about, flying, in the bowl,
-  // carried. So the tag trails behind a throw, swings, topples over onto one
-  // of its sides and lies on whatever is under it. While it steeps, the string
-  // goes over the rim and the tag hangs down the cup (see steep()).
+  // the bag's string and tag, a rope off the bag: 0 the bag's top, 1..KN-1 string,
+  // KN and KN+1 the tag's two ends (a stiff card). Not used while steeping.
   function knot(x, y) { return { x: x, y: y, px: x, py: y, w: 1 }; }
   function tagStep(dt) {
     var g = game, top = null, bag = null, r, i;
@@ -931,7 +809,7 @@
     if (bag) top = bagTop(bag.x, bag.y, bag.ang);
     if (!top) { g.tag = null; return; }
     r = g.tag;
-    if (!r) { // starts out hanging straight down, and falls in a heap
+    if (!r) {
       r = g.tag = [];
       for (i = 0; i <= KN + 1; i++) r.push(knot(top[0] + i * 0.3, top[1] + Math.min(i, KN) * KL + (i > KN ? TH : 0)));
       r[0].w = 0;
@@ -946,15 +824,12 @@
     for (var n = 0; n < 10; n++) {
       for (i = 0; i < KN; i++) link(r[i], r[i + 1], KL, false);
       link(r[KN], r[KN + 1], TH, true);
-      // the tag's corners reach TW/2 either side of its middle line: down when
-      // it lies on its side, sideways when it hangs
+      // the tag's corners stick out TW/2: down when it lies flat, sideways when it hangs
       var ux = Math.min(1, Math.abs(r[KN + 1].x - r[KN].x) / TH), uy = Math.min(1, Math.abs(r[KN + 1].y - r[KN].y) / TH);
       for (i = 1; i <= KN + 1; i++) lie(r[i], i >= KN ? 1 + TW / 2 * ux : 1, i >= KN ? 1 + TW / 2 * uy : 1, bag);
     }
   }
-  // what the string and tag come to lie on: the table or the saucer, the
-  // spoon, the cup's rim, cubes lying about; the cup's sides and the bag
-  // itself keep them out (so they fall over its side, not through it)
+  // the string and tag lie on things, and stay out of the bag and the cup's sides
   function lie(q, rad, side, bag) {
     var g = game, c = g.cup, fl = floorAt(q.x), s = spoonAt(q.x, g.arm.a, null);
     var co = Math.cos(bag.ang), si = Math.sin(bag.ang), dx = q.x - bag.x, dy = q.y - bag.y;
@@ -973,20 +848,18 @@
       if (q.py + rad <= c.top + 3) fl = Math.min(fl, c.top);
       else q.x = q.px < c.cx ? c.l - side : c.r + 30 + side;
     }
-    if (q.y + rad > fl) { // lands: stops falling, and drags along
+    if (q.y + rad > fl) {
       q.y = q.py = fl - rad;
       q.px = q.x - (q.x - q.px) * 0.5;
     }
     q.x = clamp(q.x, g.L + side, g.wall - side);
   }
 
-  // the carried thing swings a little as it's moved
   function swing(dt) {
     var g = game, vx = dt > 0 && g.mx !== undefined ? (m.x - g.mx) / dt : 0;
     g.mx = m.x;
     g.sway += (clamp(vx * 0.0015, -0.7, 0.7) - g.sway) * Math.min(1, dt * 8);
   }
-  // cubes not in the tea yet: lying about, flying, in the bowl, carried
   function cubesLeft() {
     var g = game, n = (g.arm.load === "cube" ? 1 : 0) + (g.carry && g.carry.kind === "cube" ? 1 : 0);
     g.cubes.forEach(function (k) { if (k.kind === "cube" && k.state !== "in") n++; });
@@ -994,7 +867,7 @@
   }
   function cursor() {
     var g = game, on = g.rise === 1 && m.on;
-    g.againButton.hidden = cubesLeft() > 0; // [ again ] once the last cube is gone
+    g.againButton.hidden = cubesLeft() > 0;
     root.classList.toggle("grabbing", !!g.carry);
     root.classList.toggle("grab", on && !g.carry && under(m.x, m.y) !== null);
   }
@@ -1009,14 +882,13 @@
       silver: d ? "#34363a" : "#e7e9ec",  // the spoon
       sugar: d ? "#26262a" : "#ffffff" };
   }
-  // "#a8722f" and an alpha to an rgba() colour (anything else is left as it is)
+  // "#rrggbb" + alpha to rgba(); anything else is returned as is
   function rgba(hex, a) {
     var r = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex || "");
     if (!r) return hex;
     var n = parseInt(r[1].length === 3 ? r[1].replace(/./g, "$&$&") : r[1], 16);
     return "rgba(" + (n >> 16) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
   }
-  // the cursor bag: a filled shape with a fine ink line round it
   function ink(path, fill) {
     path(); ctx.fillStyle = fill; ctx.fill();
     ctx.strokeStyle = col.fg; ctx.lineWidth = 1; ctx.lineJoin = ctx.lineCap = "round";
@@ -1084,20 +956,15 @@
     for (var i = 0; i < n; i++) { var a = from + (to - from) * i / (n - 1); pts.push([Math.cos(a) * rx, Math.sin(a) * ry]); }
     return pts;
   }
-  // the same shape, every corner a little off, differently for each seed
+  // every corner nudged a little, per seed
   function crooked(pts, seed, by) {
     return pts.map(function (q, i) { var c = Math.floor(i / 4); return [q[0] + noise(seed * 3 + c * 1.7) * by, q[1] + noise(seed * 5 + c * 2.3 + 9) * by]; });
   }
   function shift(pts, x, y) { return pts.map(function (q) { return [q[0] + x, q[1] + y]; }); }
 
   // --- the pen ---------------------------------------------------------------
-  // The table is drawn by hand with a fine pen. Every outline is a list of
-  // points, redrawn a little wobbly: each point is pushed sideways by smooth
-  // noise along the line (so the wobble belongs to the shape and travels and
-  // turns with it), a closed line runs a little past where it started, the
-  // pen presses harder here and there, and the colour is printed a touch off
-  // the line. Shading is a few hatched strokes. Nothing boils: a cube looks
-  // the same however it tumbles.
+  // Outlines wobble with noise along the line, so the wobble moves with the shape
+  // instead of boiling frame to frame.
 
   var LW = 1.4;
   function hash(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
@@ -1122,7 +989,7 @@
     }
     return out;
   }
-  // a line of points in short strokes, each pressed a little differently
+  // short strokes, each pressed a little differently
   function scribble(q, w, color, seed) {
     ctx.strokeStyle = color; ctx.lineCap = ctx.lineJoin = "round";
     for (var i = 0; i < q.length - 1; i += 3) {
@@ -1132,8 +999,7 @@
       ctx.stroke();
     }
   }
-  // o: seed, amp (how shaky), fill (a colour or a list of them, printed a
-  // touch off), w, color, open (a line, not a shape), line: false (fill only)
+  // o: seed, amp, fill (colour or list), w, color, open (a line), line: false (fill only)
   function pen(pts, o) {
     var seed = o.seed || 0, amp = o.amp === undefined ? 1 : o.amp;
     if (o.fill) {
@@ -1149,11 +1015,10 @@
     ctx.lineCap = ctx.lineJoin = "round"; ctx.stroke();
   }
 
-  // --- the scene: a still life seen from the side ----------------------------
+  // --- the scene -------------------------------------------------------------
 
   var CUBE_BOX = box(CUBE, CUBE, 3), BAG_BOX = box(BW, BH, 6), TAG_BOX = box(TW, TH, 2.5), BOWL = oval(19, 8, 26);
 
-  // the table: a pencil line, lifted off the paper twice
   function table(g) {
     var w = g.R - g.L, a = g.L + w * 0.31, b = g.L + w * 0.74;
     [[g.L, a - 3], [a + 3, b - 2], [b + 4, g.R]].forEach(function (s, i) {
@@ -1161,14 +1026,12 @@
     });
   }
 
-  // the hand, flat, seen from the side: the wrist at 0,0, the fingers along
-  // +x (shorter as they curl), the thumb towards +y. Open at the wrist, where
-  // the sleeve goes over it.
+  // wrist at 0,0, fingers along +x (shorter as they curl), thumb towards +y
   function handPts(curl) {
     var f = 1 - 0.45 * curl, notch = 26 + 10 * f, pts = [[-6, -11], [14, -12.2]];
     [[-12, -6.2, 46], [-6.2, -0.2, 54], [-0.2, 5.8, 57], [5.8, 11.8, 53]].forEach(function (d, i) {
       var r = (d[1] - d[0]) / 2, my = (d[0] + d[1]) / 2, tip = 26 + (d[2] - 26) * f;
-      for (var j = 0; j <= 4; j++) { // round the fingertip
+      for (var j = 0; j <= 4; j++) {
         var t = -Math.PI / 2 + j / 4 * Math.PI;
         pts.push([tip - r + Math.cos(t) * r, my + Math.sin(t) * r]);
       }
@@ -1181,27 +1044,25 @@
     var g = game, hd = g.hand, back = hd.a + Math.PI;
     if (hd.show < 0.01) return;
     ctx.save(); ctx.globalAlpha *= hd.show;
-    // the arm goes off down to the right, bent at the wrist (not too far), and
-    // never down through the table
+    // the arm goes down-right, bent at the wrist, never through the table
     var toS = Math.atan2(g.ground + 40 - hd.y, g.wall + 260 - hd.x), b = back + clamp(unwrap(norm(toS - back)), -1.75, 1.75);
     b = Math.min(norm(b), Math.asin(clamp((g.ground - 6 - hd.y) / (120 * HS), -1, 1)));
     ctx.save(); ctx.translate(hd.x, hd.y); ctx.scale(HS, HS); ctx.rotate(hd.a);
     pen(handPts(hd.curl), { seed: 131, fill: col.bg, open: true, w: 1.3 / HS });
-    pen([[10, -3], [19, -1.5]], { open: true, seed: 133, w: 0.8 / HS, color: col.muted, amp: 0.3 }); // a crease in the palm
+    pen([[10, -3], [19, -1.5]], { open: true, seed: 133, w: 0.8 / HS, color: col.muted, amp: 0.3 });
     ctx.restore();
-    // the sleeve over it, fading out up the arm
+    // the sleeve, fading up the arm
     ctx.save(); ctx.translate(hd.x, hd.y); ctx.scale(HS, HS); ctx.rotate(b);
     var ink = ctx.createLinearGradient(0, 0, 120, 0), paper = ctx.createLinearGradient(0, 0, 120, 0);
     ink.addColorStop(0.3, col.fg); ink.addColorStop(1, rgba(col.fg, 0));
     paper.addColorStop(0.5, col.bg); paper.addColorStop(1, rgba(col.bg, 0));
     pen([[-3, -13.5], [120, -15], [120, 15], [-3, 13.5]], { seed: 141, fill: paper, line: false });
     pen([[120, -15], [-3, -13.5], [-3, 13.5], [120, 15]], { open: true, seed: 141, color: ink, w: 1.3 / HS });
-    pen([[8, -14], [8, 14]], { open: true, seed: 143, w: 0.9 / HS, color: col.muted, amp: 0.5 }); // its cuff
+    pen([[8, -14], [8, 14]], { open: true, seed: 143, w: 0.9 / HS, color: col.muted, amp: 0.5 });
     ctx.restore();
     ctx.restore();
   }
 
-  // a tulip-shaped teacup, straight sides curving into a flat foot
   function body(c) {
     var l = c.l, r = c.r, t = c.top, b = c.bottom, pts = [];
     bez(pts, [l, t], [l + 2, t + 44], [l + 6, b - 4], [l + 30, b], 18);
@@ -1209,14 +1070,12 @@
     bez(pts, [r - 30, b], [r - 6, b - 4], [r - 2, t + 44], [r, t], 18);
     return pts;
   }
-  // a D-shaped handle: a closed ring, its ends tucked behind the cup
   function handle(c) {
     var r = c.r, t = c.top, pts = [];
     bez(pts, [r - 8, t + 16], [r + 34, t + 8], [r + 34, t + 68], [r - 8, t + 64], 20);
     bez(pts, [r - 8, t + 56], [r + 20, t + 58], [r + 20, t + 22], [r - 8, t + 26], 16);
     return pts;
   }
-  // the saucer: a thin plate, its rim turned up a little, on a low foot
   function saucer(c, ground) {
     var p = [];
     quad(p, [c.l - 26, c.dish - 1], [c.cx, c.dish + 6], [c.r + 26, c.dish - 1], 16);
@@ -1237,8 +1096,7 @@
     var g = game, x, i, shape = body(c), surf = [];
     function level(x) { return c.surf + g.ripple * Math.sin(x * 0.12 - t * 9) * 0.6; }
     for (x = c.l + 2; x <= c.r - 2; x += 4) surf.push([x, level(x)]);
-    // tea: a flat wash, stronger the longer the bag has steeped, hatched
-    // darker down the far side
+    // the tea, darker the longer the bag has steeped
     ctx.save();
     trace(wobble(shape, true, 101, 0.8), true); ctx.clip();
     trace([[c.l - 4, c.bottom + 4]].concat(surf, [[c.r + 4, c.bottom + 4]]), true);
@@ -1249,14 +1107,13 @@
     }
     pen(surf, { open: true, seed: 105, w: 1, color: col.amber, amp: 0.4 });
     ctx.restore();
-    // a ring where something went in
     if (g.splash && g.splash.t < 0.7) {
       var sp = g.splash, w = 6 + sp.t * 40;
       ctx.save(); ctx.globalAlpha *= 1 - sp.t / 0.7;
       pen([[Math.max(c.l + 6, sp.x - w), c.surf - 1], [Math.min(c.r - 6, sp.x + w), c.surf - 1]], { open: true, seed: 107, w: 1, color: col.amber });
       ctx.restore();
     }
-    // steam: three wavy strokes drifting up, more of it just after a splash
+    // steam
     var puff = 0.3 + 0.35 * g.stir + 0.1 * g.brew;
     for (var j = 0; j < 3; j++) {
       var x0 = c.cx + (j - 1) * 16, ph = j * 2.3, len = 30 + 8 * Math.sin(t * 0.7 + ph) + 10 * g.stir;
@@ -1267,19 +1124,16 @@
       }
       stroke(1.2, rgba(col.muted, puff));
     }
-    // the cup itself, and its rim
     pen(shape, { open: true, seed: 101 });
     pen(shift(oval((c.r - c.l) / 2, 3, 30), c.cx, c.top), { seed: 104, w: 1.2, amp: 0.5 });
   }
 
-  // --- sugar, the spoon, the tea bag -----------------------------------------
 
   function cube(x, y, ang, seed, s) {
     ctx.save();
     ctx.translate(x, y); ctx.rotate(ang);
     if (s) ctx.scale(s, s);
     pen(crooked(CUBE_BOX, seed, 0.9), { seed: seed, fill: col.sugar, w: 1.3 });
-    // two short strokes of shade in one corner
     for (var i = 0; i < 2; i++) {
       var o = 3.5 + i * 3.5;
       pen([[CUBE / 2 - 2.5, CUBE / 2 - o - 2.5], [CUBE / 2 - o - 2.5, CUBE / 2 - 2.5]], { open: true, seed: seed + i * 4, w: 0.8, color: col.muted, amp: 0.3 });
@@ -1287,22 +1141,20 @@
     ctx.restore();
   }
 
-  // a tea bag: a paper pouch folded over at the top, its string and tag
-  // hanging off it (the rope, see tagStep)
+  // the string and tag come from game.tag (see tagStep)
   function bagTop(x, y, ang) { return [x + Math.sin(ang) * BH / 2, y - Math.cos(ang) * BH / 2]; }
   function bagBody(x, y, ang, seed) {
     ctx.save();
     ctx.translate(x, y); ctx.rotate(ang);
     pen(crooked(BAG_BOX, seed, 1.2), { seed: seed, fill: [col.paper, rgba(col.amber, 0.35)], w: 1.3 });
-    pen([[-BW / 2 + 3, -BH / 2 + 11], [BW / 2 - 3, -BH / 2 + 11]], { open: true, seed: seed + 2, w: 0.9, amp: 0.5 }); // the fold
-    pen([[-2.5, -BH / 2 + 3], [2.5, -BH / 2 + 3]], { open: true, seed: seed + 3, w: 1.2, color: col.muted, amp: 0.2 }); // staple
+    pen([[-BW / 2 + 3, -BH / 2 + 11], [BW / 2 - 3, -BH / 2 + 11]], { open: true, seed: seed + 2, w: 0.9, amp: 0.5 });
+    pen([[-2.5, -BH / 2 + 3], [2.5, -BH / 2 + 3]], { open: true, seed: seed + 3, w: 1.2, color: col.muted, amp: 0.2 });
     ctx.restore();
   }
   function bagTag(x, y, ang, seed) {
     ctx.save();
     ctx.translate(x, y); ctx.rotate(ang);
     pen(crooked(TAG_BOX, seed + 5, 0.6), { seed: seed + 5, fill: col.bg, w: 1.1, amp: 0.5 });
-    // a little wave printed on it
     pen([[-9, 3], [-4.5, 0], [0, 3], [4.5, 0], [9, 2.5]], { open: true, seed: seed + 6, w: 1, color: col.amber, amp: 0.4 });
     ctx.restore();
   }
@@ -1319,17 +1171,15 @@
   function drawCatapult() {
     var g = game, q = g.pivot, a = g.arm.a, b = bowl(a), t = tail(a);
     var nx = -Math.sin(a), ny = Math.cos(a); // n: "up" off the spoon
-    // two cubes underneath for the hinge
     cube(q.x, g.ground - CUBE / 2, 0, 7);
     cube(q.x, g.ground - CUBE * 1.5, 0, 13);
     if (!g.arm.gone) drawSpoon(b, t, a);
     if (g.arm.load === "bag") teabag(b.x + nx * (BH / 2 + 2), b.y + ny * (BH / 2 + 2), a - Math.PI, g.arm.seed);
     else if (g.arm.load) cube(b.x + nx * (CUBE / 2 + 2), b.y + ny * (CUBE / 2 + 2), a, g.arm.seed);
   }
-  // the spoon, its bowl at b, the end of its handle at t, a: the way from the handle to the bowl
+  // b: the bowl, t: the handle's end, a: handle to bowl
   function drawSpoon(b, t, a) {
     var dx = Math.cos(a), dy = Math.sin(a), nx = -dy, ny = dx;
-    // a slim handle with a rounded end, then the bowl
     var neck = [b.x - dx * 17, b.y - dy * 17];
     pen([[t.x + nx * 2.5, t.y + ny * 2.5], [neck[0] + nx * 1.5, neck[1] + ny * 1.5],
       [neck[0] - nx * 1.5, neck[1] - ny * 1.5], [t.x - nx * 2.5, t.y - ny * 2.5],
@@ -1337,11 +1187,11 @@
       [t.x - dx * 2 + nx * 1.5, t.y - dy * 2 + ny * 1.5]], { seed: 23, fill: col.silver, w: 1.2, amp: 0.35 });
     ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(a);
     pen(BOWL, { seed: 29, fill: col.silver, w: 1.3, amp: 0.6 });
-    pen(oval(12, 4, 8, Math.PI * 0.25, Math.PI * 0.7), { open: true, seed: 31, w: 0.8, color: col.muted, amp: 0.3 }); // its hollow
+    pen(oval(12, 4, 8, Math.PI * 0.25, Math.PI * 0.7), { open: true, seed: 31, w: 0.8, color: col.muted, amp: 0.3 });
     ctx.restore();
   }
 
-  // what's being carried hangs under the pointer, faint where it can't go
+  // faint where it can't be dropped
   function drawCarry() {
     var g = game, c = g.carry;
     if (c.kind === "spoon") return drawCarriedSpoon();
@@ -1353,8 +1203,7 @@
     ctx.restore();
   }
 
-  // the carried spoon, hanging from the pointer to its bowl; in the cup the
-  // cup hides what's inside it
+  // in the cup, clipped so the cup hides the bowl
   function drawCarriedSpoon() {
     var g = game, s = g.spoon, c = g.cup, a = s.a === undefined ? Math.PI / 2 : s.a, n = ARM + TAIL;
     ctx.save();
@@ -1375,15 +1224,15 @@
     if (game) {
       var g = game, c = g.cup, e = ease(g.rise);
       ctx.save();
-      ctx.globalAlpha = e * (1 - clamp((g.roll - 0.2) / 0.5, 0, 1)); ctx.translate(0, (1 - e) * 8); // settles onto the table
+      ctx.globalAlpha = e * (1 - clamp((g.roll - 0.2) / 0.5, 0, 1)); ctx.translate(0, (1 - e) * 8);
       table(g);
       drawCupBack(c, g.ground);
-      g.cubes.forEach(function (k) { // the steeping bag hangs in the tea, the tea in front of it
+      g.cubes.forEach(function (k) { // the steeping bag, behind the tea
         if (k.state !== "steep" || !k.tag) return;
         string([bagTop(k.x, k.y, k.ang), [c.l + 8, c.top]], k.seed);
         bagBody(k.x, k.y, k.ang, k.seed);
       });
-      g.cubes.forEach(function (k) { // dissolving: smaller and fainter
+      g.cubes.forEach(function (k) { // dissolving
         if (k.state !== "in") return;
         ctx.save(); ctx.globalAlpha *= Math.max(0, 1 - k.t / 1.8); cube(k.x, k.y, k.ang, k.seed, 1 - 0.45 * k.t / 1.8); ctx.restore();
       });
@@ -1392,7 +1241,7 @@
         ctx.beginPath(); ctx.arc(d.x, d.y, 1.4, 0, 7); stroke(1, rgba(col.amber, 0.8));
       });
       drawCupFront(c, t);
-      g.cubes.forEach(function (k) { // its string over the rim, the tag hanging outside
+      g.cubes.forEach(function (k) { // its string and tag, in front of the cup
         if (k.state !== "steep" || !k.tag) return;
         var ta = k.tag.ang, tt = [k.tag.x + Math.sin(ta) * TH / 2, k.tag.y - Math.cos(ta) * TH / 2];
         string(quad([], [c.l + 8, c.top], [c.l - 6, c.top - 7], tt, 8), k.seed);
@@ -1471,7 +1320,7 @@
   }
   if (document.body) init(); else addEventListener("DOMContentLoaded", init);
 
-  // the "_" in the name is the bag: click it to pick it up or put it back
+  // the "_" in the name is the bag
   document.addEventListener("click", function (e) {
     if (!(e.target.closest && e.target.closest(".bag"))) return;
     e.preventDefault(); e.stopPropagation();
@@ -1479,8 +1328,7 @@
     hold(!held);
   }, true);
 
-  // whatever is carried goes back when the pointer leaves the window or the
-  // window loses focus mid-drag
+  // a carried thing goes back if the pointer leaves or the window loses focus
   function putBack() { if (game && game.carry) release(-1e4, -1e4); }
 
   addEventListener("mousemove", function (e) {
