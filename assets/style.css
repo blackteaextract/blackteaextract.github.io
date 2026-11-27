@@ -1,4 +1,4 @@
-/* Atkinson Hyperlegible Next, self-hosted (static/fonts, SIL OFL 1.1) */
+/* self-hosted, SIL OFL 1.1 */
 @font-face { font-family: "Atkinson Hyperlegible Next"; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/atkinson-hyperlegible-next-latin-400-normal.woff2) format("woff2"); }
 @font-face { font-family: "Atkinson Hyperlegible Next"; font-style: italic; font-weight: 400; font-display: swap; src: url(/fonts/atkinson-hyperlegible-next-latin-400-italic.woff2) format("woff2"); }
 @font-face { font-family: "Atkinson Hyperlegible Next"; font-style: normal; font-weight: 600; font-display: swap; src: url(/fonts/atkinson-hyperlegible-next-latin-600-normal.woff2) format("woff2"); }
@@ -12,8 +12,7 @@
   --amber: #a8722f;
   --steep: 0;
   --dunks: 0;
-  /* the page's margin either side, growing with wider windows: everything starts and ends on
-     it (the text, the tea table, the nav, [ close ], the footer) */
+  /* the side margin everything lines up on */
   --edge: clamp(1.25rem, 6vw - .5rem, 7rem);
 }
 @media (prefers-color-scheme: dark) {
@@ -31,23 +30,17 @@
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  position: relative; /* the footer sits in its bottom right corner */
+  position: relative; /* for the footer */
   min-height: 100vh; min-height: 100dvh;
   background: var(--bg);
   color: var(--fg);
-  /* 15.5px on phones and small windows, growing with wider screens up to 19px (about 1800px wide) */
   font: clamp(15.5px, 0.45vw + 11px, 19px)/1.65 "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
-/* hovers fade instead of snapping */
 a, button { transition: color .15s ease, text-decoration-color .15s ease; }
-/* a soft cross-fade from page to page (browsers that can, unless motion is turned down) */
 @media (prefers-reduced-motion: no-preference) {
   @view-transition { navigation: auto; }
   ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .25s; animation-timing-function: ease; }
 }
-/* main spans the page between the margins; the text in it keeps to a column on the left,
-   measured in the text size so it widens with it (about 70 characters a line). The space
-   above it grows with wider windows too */
 main { margin: 0 var(--edge); padding: clamp(6rem, 6vw + 2rem, 9rem) 0 8rem; }
 main > * { max-width: 36em; }
 a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
@@ -67,7 +60,6 @@ header h1 { margin-bottom: .1em; }
 nav { display: flex; flex-wrap: wrap; gap: .25rem 1rem; }
 nav a { text-decoration: none; }
 nav a:hover { color: var(--fg); }
-/* on wider windows the links go over to the right, level with the name, on the footer's right edge */
 @media (min-width: 60rem) {
   nav { position: absolute; top: clamp(6rem, 6vw + 2rem, 9rem); right: var(--edge); }
 }
@@ -83,8 +75,7 @@ img { max-width: 100%; height: auto; }
 .brew { display: block; margin-top: 2.5rem; padding: 0; border: 0; background: none; font: inherit; color: var(--muted); cursor: pointer; }
 .brew:hover { color: var(--fg); }
 .brew[hidden] { display: none; }
-/* down in the bottom right corner of the page (or of the window, when the page is shorter);
-   main's bottom padding keeps it clear of the content */
+/* main's bottom padding keeps it clear of the content */
 footer { position: absolute; right: var(--edge); bottom: clamp(1.25rem, 4vh, 3rem); color: var(--muted); font-size: .85em; }
 
 /* tea: see assets/tea.js and assets/teabag.js */
@@ -93,11 +84,10 @@ html.grab, html.grab * { cursor: grab !important; }
 html.grabbing, html.grabbing * { cursor: grabbing !important; }
 .bag.taken { opacity: .2; }
 .bag { transition: opacity .3s ease; }
-/* the tea table spans the page from margin to margin */
 main > .cup-spot { max-width: none; }
 .cup-spot { position: relative; height: 0; overflow: hidden; transition: height .55s cubic-bezier(.25, .8, .25, 1); }
 .cup-spot.on { height: 14rem; }
-.cup-ui { position: absolute; right: 0; bottom: .5rem; display: flex; gap: 1rem; font-size: .85em; } /* under the table, clear of the cup */
+.cup-ui { position: absolute; right: 0; bottom: .5rem; display: flex; gap: 1rem; font-size: .85em; }
 .cup-ui { transition: opacity .2s ease; }
 .cup-spot.leaving .cup-ui { opacity: 0; pointer-events: none; }
 .cup-ui button { padding: 0; border: 0; background: none; font: inherit; color: var(--muted); }
